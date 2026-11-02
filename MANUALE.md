@@ -1,0 +1,195 @@
+# S33 - Board · Manuale
+
+La board mette insieme gli strumenti della famiglia S33 su un unico tavolo, collegati con cavi come in un rack modulare. Tutto suona con un unico motore audio, a tempo con un solo Clock, e si può registrare in WAV o salvare come sessione.
+
+Funziona in **Chrome sul Mac**. Safari non supporta il MIDI dal browser.
+
+---
+
+## 1. Primi passi
+
+1. **Apri** `index.html` in Chrome: doppio clic sul file oppure dall'app installata (vedi § 12).
+2. **Avvia l'audio**: premi **Start audio** in alto a sinistra e consenti l'accesso ai dispositivi MIDI.
+3. **Suona**: con i cavi di partenza, la tastiera suona **Twin Core** e il Clock fa partire **Drum Machine**, **JSB** e gli arpeggi quando premi **Play**.
+
+All'apertura tutti i moduli entrano nella finestra (vista d'insieme). Da lì:
+
+- **Doppio clic sulla barra del titolo** di un modulo: si apre a tutta pagina. Altro doppio clic o **Esc** per tornare alla griglia.
+- **Trascinare la barra del titolo**: sposta il pannello.
+- **Trascinare l'angolo in basso a destra**: ridimensiona il pannello.
+- **Arrange** (in alto a destra): riporta la griglia, se hai spostato i pannelli.
+
+---
+
+## 2. I cavi
+
+| Colore | Porta | Esempi |
+|---|---|---|
+| **Arancio** | audio | OUT di uno strumento → IN della Stompbox o dell'Output |
+| **Blu** | note MIDI | MIDI In → MIDI di Twin Core; P1 della JSB → Nostos |
+| **Verde** | clock | CLK del Clock → CLK degli strumenti |
+
+- **Collegare**: trascina da una presa all'altra. Le prese compatibili si illuminano.
+- **Staccare**: trascina via un ingresso già collegato, oppure fai doppio clic sul cavo.
+- **Più cavi dalla stessa uscita**: sono permessi, per esempio una tastiera che suona due synth insieme.
+- **Più cavi nello stesso ingresso audio**: si sommano.
+
+Gli ingressi stanno sul bordo sinistro di ogni modulo, le uscite su quello destro.
+
+---
+
+## 3. MIDI In e MIDI In 2
+
+Ogni ingresso ha due menu:
+
+- **Dispositivo**: *All inputs*, oppure un dispositivo preciso (la tastiera, *Logic Pro Virtual Out*…).
+- **Canale**: *All*, oppure da *Ch 1* a *Ch 16*.
+
+**Panic** manda un "tutte le note spente" a ogni strumento.
+
+**Esempio con Logic.** Le tracce External MIDI di Logic escono su *Logic Pro Virtual Out*, Twin Core sul canale 1 e Nostos sul canale 2.
+
+- MIDI In: Logic, *Ch 1* → Twin Core.
+- MIDI In 2: Logic, *Ch 2* → Nostos.
+
+> Se il **MIDI Out** scrive su un bus IAC, non lasciare un MIDI In su *All inputs*: le note tornerebbero dentro la board.
+
+---
+
+## 4. Clock
+
+- **BPM**: slider da 40 a 240, oppure **Tap**.
+- **Play / Stop**: avvia e ferma tutto quello che è collegato al Clock: Drum Machine, JSB e registrazione (se "Clock" è spuntato nell'Output). Con Play attivo, arpeggi e sequencer cadono sulla stessa griglia.
+- **LED**: lampeggia a ogni battito, bianco sul primo della battuta.
+- **Sorgente**: *Internal*, oppure *MIDI clock* da un dispositivo, per esempio Logic con "Trasmetti MIDI Clock" attivo. Compare **EXT**: tempo, Start e Stop arrivano da fuori.
+
+Cosa riceve chi è collegato al Clock:
+
+| Modulo | Cosa segue |
+|---|---|
+| Twin Core | Arpeggiatore (la manopola Tempo viene ignorata) |
+| Nostos One | Arpeggiatore e delay sincronizzato |
+| JSB | Tempo, Play/Stop, griglia |
+| Drum Machine | Tempo, Play/Stop, griglia; il primo step coincide con la battuta |
+| Stompbox | Tempo del delay = un battito (come il TAP) |
+
+---
+
+## 5. Mixer
+
+Un canale per strumento: **TWIN**, **NOST**, **JSB**, **DRUM**, **STOMP**. Nella versione ingrandita i nomi sono interi e i fader lunghi.
+
+- **PAN**: posizione stereo. Doppio clic per il centro.
+- **SND**: mandata verso la presa **SEND** del Mixer, presa dopo il fader. Doppio clic per azzerarla.
+- **Fader**: 0 dB a circa 4/5 della corsa, fino a +6 dB in cima, silenzio in fondo. Doppio clic per 0 dB.
+- **Indicatore** di livello, preso dopo fader e pan.
+- **M** (mute) e **S** (solo).
+
+**Il fader agisce sull'uscita dello strumento**, ovunque sia collegata: il fader di Twin Core lo regola anche se passa dalla Stompbox.
+
+**Il Solo segue i collegamenti.** Lo strumento in solo resta acceso insieme a quello che sta a valle (la Stompbox, se ci passa o se riceve la sua mandata) e a monte (Twin Core, se metti in solo la Stompbox).
+
+**La Stompbox come effetto in mandata**
+
+1. Collega **SEND** (Mixer) → **IN** (Stompbox) e **OUT** (Stompbox) → **IN** (Output).
+2. Alza **SND** sugli strumenti che vuoi mandare al riverbero o al delay. Abbassa il canale STOMP per dosare il ritorno.
+
+Se Twin Core è collegato direttamente alla Stompbox, resta anche in serie: puoi usare le due cose insieme.
+
+---
+
+## 6. Gli strumenti
+
+Ogni strumento ha la sua interfaccia completa, con preset e manopole, ed è lo stesso dell'app singola.
+
+- **Twin Core**: monofonico, due oscillatori, patch bay interna, molla. Prese: MIDI, CLK, OUT.
+- **Nostos One**: polifonico (fino a 8 voci), modulare. Le sue facce Panel e Board sono interne al modulo. Prese: MIDI, CLK, OUT.
+- **JSB**: quattro playhead su una griglia nella scala scelta. Prese:
+  - **OUT**: la voce interna della JSB. Per sentire solo i synth, abbassa o metti in mute il canale JSB nel Mixer.
+  - **P1–P4**: le note di ogni playhead, sul canale 1–4. Le note lunghe durano davvero. Il Mute di un playhead ferma anche le sue note MIDI.
+- **Drum Machine**: Kick, Snare, Hat e Clap, pattern fino a 7/4 con griglia da 1/8 a 1/32. Prese: CLK, OUT, **MIDI**. Ogni colpo esce anche come nota sul canale 10: Kick 36, Snare 38, Clap 39, Hat 42. Collegata a un synth, gli fa suonare quelle note.
+- **Stompbox**: chorus, flanger, delay e riverbero. Si accendono con l'interruttore e si riordinano trascinando ≡. Prese: IN, CLK, OUT. Nella board ricorda i suoi pedali. I pulsanti Microfono, File e Test funzionano anche qui, come sorgenti in più.
+
+---
+
+## 7. Output e registrazione
+
+- **Volume** d'ascolto, con indicatori L/R e un limiter che protegge le casse.
+- **● REC / ■ STOP**: registra in WAV stereo a 24 bit. I file vanno nella cartella Download alla fine della registrazione.
+- **Master**: un solo file con quello che senti, dopo il limiter e prima del volume d'ascolto.
+- **Stems**: il Master più un file per strumento, dopo fader e pan. Gli strumenti muti non si salvano. Chrome può chiedere di consentire i download multipli.
+- **Clock** (spuntato): REC diventa **ARMED** e parte esattamente sul primo battito al Play del Clock, si ferma allo Stop. In Logic, con lo stesso BPM, i file vanno alla battuta 1 e sono a tempo.
+
+Nome dei file: `S33 Board <data ora> <BPM>bpm - <parte>.wav`.
+
+> Negli Stems, il file *Stompbox* contiene già Twin Core quando Twin Core passa dalla pedaliera: in Logic usa uno dei due.
+
+---
+
+## 8. MIDI Out
+
+Manda a un dispositivo del Mac le note che riceve dalla sua presa: di serie, quelle della Drum Machine.
+
+- **Dispositivo**: per Logic attiva un bus del **driver IAC** (Configurazione MIDI Audio → Studio MIDI → Driver IAC → "Il dispositivo è online"), poi sceglilo qui.
+- **Canale**: *As is* lascia il canale originale (10 per la batteria), oppure lo forza.
+
+---
+
+## 9. Sessioni
+
+In alto, il blocco **Session**:
+
+- **Nome** della sessione.
+- **Save** (⌘S): la prima volta chiede dove salvare `Nome.s33session.json`, poi sovrascrive lo stesso file.
+- **Save as…** (⇧⌘S): salva una copia in un nuovo file.
+- **Open…**: apre una sessione e ricarica la board. Poi premi **Start audio**.
+- **New**: tutto torna allo stato iniziale. Chiede conferma con un secondo clic.
+
+Una sessione contiene cavi, disposizione, Clock, Mixer, MIDI, Output e lo stato di ogni strumento: suono di Twin Core, patch di Nostos, griglia della JSB, pattern della Drum Machine, pedali della Stompbox. Restano fuori le librerie dei tuoi preset e la skin di Nostos.
+
+---
+
+## 10. Indicatore di carico
+
+Accanto a *Running*, in alto:
+
+- **verde** (*Load OK*): nessuna interruzione dell'audio negli ultimi 10 secondi;
+- **giallo**: qualche interruzione;
+- **rosso**: interruzioni frequenti.
+
+Passa il mouse sopra la spia per vedere il dettaglio e la latenza. Se diventa rossa, abbassa prima le voci di Nostos One (da 8 a 4) e chiudi le app pesanti.
+
+---
+
+## 11. Scorciatoie
+
+| Tasto | Azione |
+|---|---|
+| Doppio clic sul titolo | Ingrandisci / riduci il modulo |
+| Esc | Chiudi il modulo ingrandito |
+| ⌘S / ⇧⌘S | Salva sessione / Salva come |
+| Doppio clic su un cavo | Stacca il cavo |
+| Doppio clic su fader, PAN, SND | Valore di partenza |
+
+Dentro gli strumenti valgono le loro scorciatoie: tasti A–K in Twin Core e Nostos, spazio nella Drum Machine.
+
+---
+
+## 12. Installare la board come app
+
+Il file funziona anche aperto con un doppio clic. Per averla come app sul Mac, con icona propria e funzionamento offline, serve un indirizzo http:
+
+```bash
+cd "s33 - Board/v14 (1.0.0)"
+python3 -m http.server 8000
+```
+
+Apri `http://localhost:8000` in Chrome e scegli **Installa S33 - Board** dal menu ⋮. In alternativa pubblica la cartella su GitHub Pages, come le altre app S33.
+
+> Ogni indirizzo ha la sua memoria: la board aperta come file, da `localhost` o da GitHub Pages non condivide le impostazioni. Per portare il lavoro da una all'altra, salva una **sessione** e aprila nell'altra.
+
+---
+
+## 13. Aggiornare la board
+
+Quando aggiorni uno strumento, la board si rigenera con lo script nella cartella `build`; i file originali non vengono mai modificati. Il comando completo è nel README. Se lo script si ferma con *"atteso 1 punto da modificare"*, quello strumento è cambiato proprio dove la board lo collega: va adattato lo script.
