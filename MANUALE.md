@@ -23,6 +23,24 @@ All'apertura tutti i moduli entrano nella finestra (vista d'insieme). Da lì:
 
 ## 2. I cavi
 
+La board ha due viste, scelte con l'interruttore **PLAY / PATCH** in alto a destra o con il tasto **Tab**:
+
+- **PLAY**: gli strumenti, per suonare. I cavi sono **nascosti**. Le prese restano visibili sui bordi dei pannelli, con il centro colorato quando hanno un cavo, e si possono collegare anche da qui. Il pulsante **Cables** li mostra finché non lo premi di nuovo; mentre tiri un cavo si vedono da soli.
+- **PATCH**: ogni modulo è un blocco semplice, col nome, il colore e tutte le prese in chiaro: ingressi a sinistra, uscite a destra con l'etichetta crema. Qui si collega comodamente.
+
+**Collegare nella vista Patch**
+
+- **Clic e clic**: un clic su una presa la accende e illumina quelle compatibili; un clic su una di esse crea il cavo. Un altro clic sulla stessa presa, un clic sul vuoto o **Esc** annullano.
+- **Trascinando**: come nella vista Play.
+- **Doppio clic su un cavo**: lo stacca.
+- **Blocchi**: si spostano trascinando la barra del titolo, e **Arrange** li rimette in ordine da sinistra a destra. La loro disposizione è separata da quella dei pannelli ed entra nelle sessioni.
+- **Doppio clic sul titolo di un blocco**: torna alla vista Play con quello strumento a tutta pagina.
+- **Attività**: sui blocchi lampeggiano un LED blu quando passa MIDI e un LED verde a ogni battito del Clock; una barra in basso mostra il livello audio. Così vedi subito se un collegamento funziona.
+
+L'audio non si ferma quando cambi vista: cambia solo quello che vedi.
+
+**I cavi in generale**
+
 | Colore | Porta | Esempi |
 |---|---|---|
 | **Arancio** | audio | OUT di uno strumento → IN della Stompbox o dell'Output |
@@ -165,8 +183,9 @@ Passa il mouse sopra la spia per vedere il dettaglio e la latenza. Se diventa ro
 
 | Tasto | Azione |
 |---|---|
-| Doppio clic sul titolo | Ingrandisci / riduci il modulo |
-| Esc | Chiudi il modulo ingrandito |
+| Tab | Vista PLAY / PATCH |
+| Doppio clic sul titolo | Ingrandisci / riduci il modulo (nella vista Patch: apri lo strumento) |
+| Esc | Chiudi il modulo ingrandito · annulla la presa accesa nella vista Patch |
 | ⌘S / ⇧⌘S | Salva sessione / Salva come |
 | Doppio clic su un cavo | Stacca il cavo |
 | Doppio clic su fader, PAN, SND | Valore di partenza |
@@ -180,7 +199,7 @@ Dentro gli strumenti valgono le loro scorciatoie: tasti A–K in Twin Core e Nos
 Il file funziona anche aperto con un doppio clic. Per averla come app sul Mac, con icona propria e funzionamento offline, serve un indirizzo http:
 
 ```bash
-cd "s33 - Board/v14 (1.0.0)"
+cd "s33 - Board/v15 (1.1.0)"
 python3 -m http.server 8000
 ```
 

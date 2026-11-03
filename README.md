@@ -19,7 +19,7 @@ Made for **Chrome on the Mac** with a MIDI keyboard. It is a **PWA** in a single
 The service worker needs `http://localhost` or `https://`:
 
 ```bash
-cd "v14 (1.0.0)"
+cd "v15 (1.1.0)"
 python3 -m http.server 8000
 # open http://localhost:8000 in Chrome → ⋮ menu → Install S33 - Board
 ```
@@ -51,6 +51,8 @@ Browser storage is per address: a board opened as a file, from `localhost` or fr
 | MIDI Out | MIDI in | Sends to a Mac MIDI port (IAC bus, Logic…) |
 
 Cable colours: **orange** audio, **blue** MIDI, **green** clock.
+
+Two views (**PLAY / PATCH**, or the Tab key): *Play* shows the instruments with the cables hidden (the **Cables** button shows them); *Patch* shows every module as a simple block with all its jacks, for easy patching (click an output, then an input).
 
 ---
 

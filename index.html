@@ -67,6 +67,55 @@ body.maxed .cbl,body.maxed .jk{opacity:0;pointer-events:none}
   background:radial-gradient(circle,#050505 0 34%,#3a3833 36% 50%,var(--jc) 52% 100%);box-shadow:0 1px 4px rgba(0,0,0,.7)}
 .jk.audio{--jc:#c9c2b2} .jk.midi{--jc:#8fb4e8} .jk.clock{--jc:#9fdcb3}
 .jk:hover,.jk.ok{transform:scale(1.18)}
+/* presa con un cavo: il centro prende il colore del cavo */
+.jk.plug{background:radial-gradient(circle,var(--pc) 0 30%,#050505 31% 36%,#3a3833 38% 50%,var(--jc) 52% 100%)}
+.jk.audio{--pc:#ff8a52} .jk.midi{--pc:#5aa0ff} .jk.clock{--pc:#5fcf86}
+/* vista Play: cavi nascosti, salvo "Cables" o mentre si tira un cavo */
+body:not(.showc):not(.patching) .cbl{display:none}
+/* interruttore Play / Patch */
+.vsw{display:flex;background:var(--frame2);border:1px solid var(--line);border-radius:7px;padding:2px;gap:2px}
+.vsw button{border:0;background:transparent;padding:5px 12px;border-radius:5px;color:var(--mut);font-weight:700;letter-spacing:.08em}
+.vsw button.on{background:var(--ink);color:#111}
+#cabs.on{background:var(--audio);border-color:var(--audio);color:#111}
+body.pv #cabs{display:none}
+/* vista Patch */
+#pv{position:absolute;left:0;right:0;top:50px;bottom:0;overflow:auto;z-index:3000;display:none;
+  background:radial-gradient(circle,#24221f 1px,transparent 1.3px) 0 0/22px 22px,#0b0a09}
+body.pv #pv{display:block}
+#pvc{position:relative}
+/* i cavi passano sotto i blocchi: le prese, sui bordi, ne coprono le punte */
+#pvs,#pvt{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none;z-index:0}
+#pvt{z-index:5}
+#pvs .c{fill:none;stroke-width:5;stroke-linecap:round;pointer-events:stroke;cursor:pointer;opacity:.95}
+#pvs .c:hover{stroke-width:7}
+#pvs .sh{fill:none;stroke:#000;stroke-width:8;stroke-linecap:round;opacity:.35}
+#pvt .tmp{fill:none;stroke-width:5;stroke-linecap:round;stroke-dasharray:2 8;opacity:.9}
+.pb{position:absolute;background:var(--frame);border:1px solid #000;border-radius:9px;box-shadow:0 8px 22px rgba(0,0,0,.5);z-index:1;user-select:none}
+.pb .ph{height:34px;display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:2px solid var(--c);cursor:grab;border-radius:9px 9px 0 0;background:linear-gradient(#2a2926,#1f1e1b)}
+body.pvdrag .pb .ph{cursor:grabbing}
+.pb .ph b{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+.pb .ph small{font-size:9.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.pb .ph .sw{width:10px;height:10px;border-radius:3px;background:var(--c);flex:none}
+.pb .act{display:flex;gap:5px;align-items:center;flex:none}
+.pb .act i{width:7px;height:7px;border-radius:50%;background:#2a2723;box-shadow:inset 0 0 0 1px #000}
+.pb .act i.mi.hot{background:var(--midi);box-shadow:0 0 6px var(--midi)}
+.pb .act i.ck.hot{background:var(--clk);box-shadow:0 0 6px var(--clk)}
+.pb .lv{position:absolute;left:10px;right:10px;bottom:5px;height:3px;border-radius:2px;background:#24221f;overflow:hidden}
+.pb .lv i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3c9a6a 0 70%,#d2b42a 70% 88%,#d0452f 88%)}
+.pb .rows{position:relative;padding:4px 0 12px}
+.pp{position:absolute;height:24px;display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--ink);cursor:pointer;white-space:nowrap}
+.pp.in{left:-11px}
+.pp.out{right:-11px;flex-direction:row-reverse}
+.pp i{width:22px;height:22px;border-radius:50%;flex:none;background:radial-gradient(circle,#050505 0 34%,#3a3833 36% 50%,var(--jc) 52% 100%);box-shadow:0 1px 4px rgba(0,0,0,.7);transition:transform .1s}
+.pp.audio{--jc:#c9c2b2;--pc:#ff8a52} .pp.midi{--jc:#8fb4e8;--pc:#5aa0ff} .pp.clock{--jc:#9fdcb3;--pc:#5fcf86}
+.pp.plug i{background:radial-gradient(circle,var(--pc) 0 30%,#050505 31% 36%,#3a3833 38% 50%,var(--jc) 52% 100%)}
+.pp:hover i,.pp.ok i{transform:scale(1.18)}
+.pp.ok i{box-shadow:0 0 0 3px var(--hl),0 1px 4px rgba(0,0,0,.7)}
+.pp.arm i{box-shadow:0 0 0 3px #fff,0 0 12px var(--pc)}
+.pp span{padding:1px 5px;border-radius:3px}
+.pp.out span{background:#efe7d6;color:#111}
+#pvhint{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:3100;display:none;background:rgba(28,27,25,.94);border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:11.5px;color:var(--mut);white-space:nowrap}
+body.pv #pvhint{display:block}
 .jk.ok{box-shadow:0 0 0 3px var(--hl),0 1px 4px rgba(0,0,0,.7)}
 .jk .lb{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;letter-spacing:.1em;white-space:nowrap;color:var(--ink);
   background:rgba(14,13,12,.85);padding:0 4px;border-radius:3px;pointer-events:none}
@@ -150,9 +199,13 @@ input[type=range]:disabled{opacity:.35}
     <button id="ssave" title="Save the session (⌘S)">Save</button><button id="ssaveas" title="Save the session to a new file">Save as…</button><span id="smsg"></span></div>
   <span class="sp"></span>
   <div class="hint">Drag from a jack to another to patch · drag a plugged input away to unplug · double-click a cable to remove it<br>Drag a title bar to move · double-click it to enlarge · corner to resize</div>
+  <div class="vsw" title="Play: the instruments · Patch: the cables (Tab)"><button id="vplay" class="on">PLAY</button><button id="vpatch">PATCH</button></div>
+  <button id="cabs" title="Show the cables on the instruments">Cables</button>
   <button id="reset" title="Fit every module in the window">Arrange</button>
 </div>
 <div id="ws"><div id="cv"><svg id="cables"></svg></div></div>
+<div id="pv"><div id="pvc"><svg id="pvs"></svg><svg id="pvt"></svg></div></div>
+<div id="pvhint">Click an output, then an input (or drag) · double-click a cable to remove it · double-click a title to open the instrument · Esc cancels</div>
 
 <script>
 /* ===== App incorporate (generate da build.py: non modificare a mano) ===== */
@@ -325,6 +378,7 @@ function fillOutSel(){
 function midiSend(from, data, at, port){
   S.cables.forEach(c=>{
     if(c.a.m !== from || portOf(c.a).t !== "midi" || (port && c.a.p !== port)) return;
+    if(typeof patchFlash === "function"){ patchFlash(c.a.m, "mi"); patchFlash(c.b.m, "mi"); }
     if(c.b.m === "mout"){ moutSend(data, at); return; }
     const inp = S33mods[c.b.m].midiInput; if(!inp || !inp.onmidimessage) return;
     const go = ()=>{ try{ inp.onmidimessage({data:new Uint8Array(data), target:inp, timeStamp:performance.now()}); }catch(e){ console.warn(e); } };
@@ -854,6 +908,9 @@ function curve(x1,y1,x2,y2){
 function col(t){ return t === "midi" ? "var(--midi)" : t === "clock" ? "var(--clk)" : "var(--audio)"; }
 function drawCables(){
   cv.querySelectorAll("svg.cbl").forEach(e=>e.remove());
+  const used = new Set(); S.cables.forEach(c=>{ used.add(c.a.m + ":" + c.a.p); used.add(c.b.m + ":" + c.b.p); });
+  cv.querySelectorAll(".jk").forEach(j=>j.classList.toggle("plug", used.has(j.dataset.m + ":" + j.dataset.p)));
+  if(typeof patchDraw === "function") patchDraw(used);
   S.cables.forEach((c,i)=>{
     const [x1,y1] = jackXY(c.a), [x2,y2] = jackXY(c.b), d = curve(x1,y1,x2,y2), t = portOf(c.a).t;
     const g = document.createElementNS(NS,"svg"); g.setAttribute("class","cbl");
@@ -897,7 +954,7 @@ function jackDown(ev, id, q){
     if(k){ from = k[0].a; removeCable(k[1]); }
   }
   const fq = portOf(from), [sx,sy] = jackXY(from), tmp = document.createElementNS(NS,"path");
-  tmp.setAttribute("class","tmp"); tmp.style.stroke = col(fq.t); svg.appendChild(tmp);
+  tmp.setAttribute("class","tmp"); tmp.style.stroke = col(fq.t); svg.appendChild(tmp); document.body.classList.add("patching");
   const cvr = ()=>cv.getBoundingClientRect();
   const targets = [...cv.querySelectorAll(".jk")].filter(j=>{ const tq = portOf({m:j.dataset.m,p:j.dataset.p}); return j.dataset.m !== from.m && tq.t === fq.t && tq.dir !== fq.dir; });
   targets.forEach(j=>{ j.classList.add("ok"); j.style.setProperty("--hl", col(fq.t)); });
@@ -905,7 +962,7 @@ function jackDown(ev, id, q){
     const r = cvr(), x = e.clientX - r.left, y = e.clientY - r.top;
     tmp.setAttribute("d", fq.dir === "out" ? curve(sx,sy,x,y) : curve(x,y,sx,sy));
   }, e=>{
-    targets.forEach(j=>j.classList.remove("ok")); tmp.remove();
+    targets.forEach(j=>j.classList.remove("ok")); tmp.remove(); document.body.classList.remove("patching");
     const j = jackAt(e.clientX, e.clientY);
     if(!j || !targets.includes(j)) return;
     const to = {m:j.dataset.m, p:j.dataset.p};
@@ -913,10 +970,145 @@ function jackDown(ev, id, q){
   });
 }
 
-function arrange(){ ORDER.forEach(id=>P[id].max = null); S.pos = arrangement(); S.auto = true; ws.scrollLeft = ws.scrollTop = 0; layoutAll(); save(); }
+/* ===== Vista Patch =====
+   Gli stessi moduli in forma di blocchi, con tutte le prese in chiaro. I cavi sono gli stessi della vista Play. */
+const PV = { on:false, arm:null, el:{} };
+const pvEl = document.getElementById("pv"), pvc = document.getElementById("pvc"), pvs = document.getElementById("pvs"), pvt = document.getElementById("pvt");
+const PV_SUB = { midi:"MIDI input", midi2:"MIDI input", clock:"Tempo · transport", mixer:"Fader · pan · send", tc:"Mono synth", no:"Poly synth",
+  jsb:"4-playhead sequencer", dm:"Drum machine", sb:"Effects", outm:"Speakers · REC", mout:"To the Mac" };
+const PV_W = 204, PV_HEAD = 34, PV_ROW = 28;
+const pvRows = id=>{ const ps = DEFS[id].ports; return Math.max(1, ps.filter(q=>q.dir === "in").length, ps.filter(q=>q.dir === "out").length); };
+const pvH = id=>PV_HEAD + 4 + pvRows(id) * PV_ROW + 12;
+function pvPortXY(e){ const b = S.patchPos[e.m], q = portOf(e), ps = DEFS[e.m].ports.filter(o=>o.dir === q.dir), i = ps.indexOf(q);
+  return [q.dir === "in" ? b.x : b.x + PV_W, b.y + PV_HEAD + 4 + i * PV_ROW + PV_ROW / 2]; }
+/* disposizione di partenza: il segnale scorre da sinistra a destra */
+function patchArrangement(){
+  const W = Math.max(1000, pvEl.clientWidth || innerWidth), H = Math.max(500, (pvEl.clientHeight || innerHeight - 50));
+  const cols = [["midi","midi2","clock"], ["jsb","dm"], ["tc","no"], ["sb","mixer"], ["outm","mout"]];
+  const gap = Math.max(70, Math.floor((W - 40 - cols.length * PV_W) / (cols.length - 1))), pos = {};
+  cols.forEach((col, ci)=>{ const hs = col.map(pvH), tot = hs.reduce((a,b)=>a+b, 0) + (col.length - 1) * 40;
+    let y = Math.max(30, Math.round((H - tot) / 2)); col.forEach((id, k)=>{ pos[id] = {x:20 + ci * (PV_W + gap), y}; y += hs[k] + 40; }); });
+  return pos;
+}
+function patchBuild(){
+  if(!S.patchPos) S.patchPos = patchArrangement();
+  const def = patchArrangement(); ORDER.forEach(id=>{ if(!S.patchPos[id]) S.patchPos[id] = def[id]; });
+  ORDER.forEach(id=>{
+    const d = DEFS[id], b = document.createElement("div"); b.className = "pb"; b.dataset.m = id; b.style.setProperty("--c", d.c);
+    const hasAudio = d.ports.some(q=>q.dir === "out" && q.t === "audio") || id === "outm";
+    b.innerHTML = `<div class="ph" title="Double-click: open ${esc(d.name)}"><span class="sw"></span><b>${esc(d.name)}</b><small>${esc(PV_SUB[id] || "")}</small>
+      <span class="act">${d.ports.some(q=>q.t === "midi") ? '<i class="mi" title="MIDI activity"></i>' : ""}${d.ports.some(q=>q.t === "clock") ? '<i class="ck" title="Clock"></i>' : ""}</span></div>
+      <div class="rows"></div>${hasAudio ? '<div class="lv" title="Audio level"><i></i></div>' : ""}`;
+    b.style.width = PV_W + "px"; b.style.height = pvH(id) + "px";
+    const rows = b.querySelector(".rows"), idx = {in:0, out:0};
+    d.ports.forEach(q=>{ const i = idx[q.dir]++, el = document.createElement("div");
+      el.className = "pp " + q.dir + " " + q.t; el.dataset.m = id; el.dataset.p = q.p; el.style.top = (4 + i * PV_ROW + (PV_ROW - 24) / 2) + "px";
+      el.title = d.name + " · " + q.l + (q.dir === "in" ? " (input)" : " (output)");
+      el.innerHTML = `<i></i><span>${esc(q.l)}</span>`; el.addEventListener("pointerdown", ev=>pvPortDown(ev, el)); rows.appendChild(el); });
+    pvc.appendChild(b); PV.el[id] = { b, mi:b.querySelector(".mi"), ck:b.querySelector(".ck"), lv:b.querySelector(".lv i") };
+    pvBindMove(id, b.querySelector(".ph"));
+    b.querySelector(".ph").addEventListener("dblclick", ()=>{ setView(false); if(!P[id].max) toggleMax(id); });
+  });
+  patchLayout();
+}
+function patchLayout(){
+  let mx = 0, my = 0;
+  ORDER.forEach(id=>{ const p = S.patchPos[id], e = PV.el[id]; if(!e) return; e.b.style.left = p.x + "px"; e.b.style.top = p.y + "px";
+    mx = Math.max(mx, p.x + PV_W); my = Math.max(my, p.y + pvH(id)); });
+  pvc.style.width = Math.max(pvEl.clientWidth, mx + 60) + "px"; pvc.style.height = Math.max(pvEl.clientHeight, my + 60) + "px";
+  patchDraw();
+}
+function patchDraw(used){
+  if(!PV.el.midi) return;
+  if(!used){ used = new Set(); S.cables.forEach(c=>{ used.add(c.a.m + ":" + c.a.p); used.add(c.b.m + ":" + c.b.p); }); }
+  pvc.querySelectorAll(".pp").forEach(e=>e.classList.toggle("plug", used.has(e.dataset.m + ":" + e.dataset.p)));
+  pvs.querySelectorAll("g").forEach(g=>g.remove());
+  S.cables.forEach((c, i)=>{
+    if(!S.patchPos[c.a.m] || !S.patchPos[c.b.m]) return;
+    const [x1,y1] = pvPortXY(c.a), [x2,y2] = pvPortXY(c.b), dd = curve(x1,y1,x2,y2), g = document.createElementNS(NS, "g");
+    const sh = document.createElementNS(NS, "path"); sh.setAttribute("class", "sh"); sh.setAttribute("d", dd); sh.setAttribute("transform", "translate(0 3)"); g.appendChild(sh);
+    const pa = document.createElementNS(NS, "path"); pa.setAttribute("class", "c"); pa.setAttribute("d", dd); pa.style.stroke = col(portOf(c.a).t);
+    pa.addEventListener("dblclick", ()=>removeCable(i)); g.appendChild(pa); pvs.appendChild(g);
+  });
+}
+function pvBindMove(id, hd){
+  hd.addEventListener("pointerdown", ev=>{
+    if(ev.button !== 0) return; ev.preventDefault();
+    const p = S.patchPos[id], x0 = ev.clientX, y0 = ev.clientY, px = p.x, py = p.y; document.body.classList.add("pvdrag");
+    const mv = e=>{ p.x = Math.max(0, px + e.clientX - x0); p.y = Math.max(0, py + e.clientY - y0); PV.el[id].b.style.left = p.x + "px"; PV.el[id].b.style.top = p.y + "px"; patchDraw(); };
+    const up = ()=>{ removeEventListener("pointermove", mv); removeEventListener("pointerup", up); document.body.classList.remove("pvdrag"); patchLayout(); save(); };
+    addEventListener("pointermove", mv); addEventListener("pointerup", up);
+  });
+}
+const pvCompat = (a, b)=>{ const qa = portOf(a), qb = portOf(b); return a.m !== b.m && qa.t === qb.t && qa.dir !== qb.dir; };
+function pvMark(from){
+  pvc.querySelectorAll(".pp").forEach(e=>{ const ok = !!from && pvCompat(from, {m:e.dataset.m, p:e.dataset.p});
+    e.classList.toggle("ok", ok); if(ok) e.style.setProperty("--hl", col(portOf(from).t));
+    e.classList.toggle("arm", !!from && e.dataset.m === from.m && e.dataset.p === from.p); });
+}
+function pvConnect(x, y){ portOf(x).dir === "out" ? addCable(x, y) : addCable(y, x); }
+function pvDisarm(){ PV.arm = null; pvMark(null); }
+/* clic: arma una presa e poi clic sulla presa compatibile; oppure trascina come nella vista Play */
+function pvPortDown(ev, el){
+  if(ev.button !== 0) return; ev.preventDefault(); ev.stopPropagation();
+  const me = {m:el.dataset.m, p:el.dataset.p}, q = portOf(me), x0 = ev.clientX, y0 = ev.clientY;
+  let moved = false, from = me, tmp = null;
+  const mv = e=>{
+    if(!moved && Math.hypot(e.clientX - x0, e.clientY - y0) < 6) return;
+    if(!moved){ moved = true; pvDisarm();
+      if(q.dir === "in"){ const k = S.cables.map((c,i)=>[c,i]).filter(([c])=>c.b.m === me.m && c.b.p === me.p).pop(); if(k){ from = k[0].a; removeCable(k[1]); } }
+      tmp = document.createElementNS(NS, "path"); tmp.setAttribute("class", "tmp"); tmp.style.stroke = col(portOf(from).t); pvt.appendChild(tmp); pvMark(from); }
+    const r = pvc.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, [sx, sy] = pvPortXY(from);
+    tmp.setAttribute("d", portOf(from).dir === "out" ? curve(sx, sy, x, y) : curve(x, y, sx, sy));
+  };
+  const up = e=>{
+    removeEventListener("pointermove", mv); removeEventListener("pointerup", up);
+    if(moved){ tmp.remove(); pvMark(null);
+      const hit = document.elementsFromPoint(e.clientX, e.clientY).map(n=>n.closest && n.closest(".pp")).find(Boolean);
+      if(hit){ const to = {m:hit.dataset.m, p:hit.dataset.p}; if(pvCompat(from, to)) pvConnect(from, to); }
+      return; }
+    // un clic
+    if(PV.arm && PV.arm.m === me.m && PV.arm.p === me.p){ pvDisarm(); return; }
+    if(PV.arm && pvCompat(PV.arm, me)){ pvConnect(PV.arm, me); pvDisarm(); return; }
+    PV.arm = me; pvMark(me);
+  };
+  addEventListener("pointermove", mv); addEventListener("pointerup", up);
+}
+pvEl.addEventListener("pointerdown", e=>{ if(!e.target.closest(".pp") && !e.target.closest(".ph")) pvDisarm(); });
+/* attività: LED MIDI, LED del clock, livello audio */
+function patchFlash(id, k){ const e = PV.el[id]; if(!PV.on || !e || !e[k]) return; const l = e[k]; l.classList.add("hot"); clearTimeout(l._t); l._t = setTimeout(()=>l.classList.remove("hot"), 90); }
+let pvSendAn = null;
+(function pvLoop(){
+  requestAnimationFrame(pvLoop); if(!PV.on || !ctx) return;
+  const beat = CLK.running ? clkPos(ctx.currentTime) : -1, onBeat = beat >= 0 && beat - Math.floor(beat) < 0.15;
+  ORDER.forEach(id=>{ const e = PV.el[id]; if(e && e.ck) e.ck.classList.toggle("hot", onBeat && (id === "clock" || clockConnected(id))); });
+  if(!pvSendAn && S33mods.mixer.out){ pvSendAn = ctx.createAnalyser(); pvSendAn.fftSize = 512; S33mods.mixer.out.connect(pvSendAn); }
+  const buf = new Float32Array(512);
+  ORDER.forEach(id=>{ const e = PV.el[id]; if(!e || !e.lv) return;
+    const a = id === "outm" ? anL : id === "mixer" ? pvSendAn : mxAn[id]; if(!a) return;
+    a.getFloatTimeDomainData(buf); let pk = 0; for(let i = 0; i < buf.length; i += 2){ const v = Math.abs(buf[i]); if(v > pk) pk = v; }
+    const db = 20 * Math.log10(Math.max(pk, 1e-5)); e.lv.style.width = Math.max(0, Math.min(100, (db + 48) / 48 * 100)) + "%"; });
+})();
+/* passare da una vista all'altra */
+function setView(patch){
+  PV.on = patch; document.body.classList.toggle("pv", patch);
+  document.getElementById("vplay").classList.toggle("on", !patch); document.getElementById("vpatch").classList.toggle("on", patch);
+  if(patch){ if(!PV.el.midi) patchBuild(); else patchLayout(); } else pvDisarm();
+}
+document.getElementById("vplay").onclick = ()=>setView(false);
+document.getElementById("vpatch").onclick = ()=>setView(true);
+document.getElementById("cabs").onclick = ()=>{ const on = document.body.classList.toggle("showc"); document.getElementById("cabs").classList.toggle("on", on); };
+addEventListener("keydown", e=>{
+  if(e.target.closest && e.target.closest("input, select, textarea")) return;
+  if(e.key === "Tab" && !e.metaKey && !e.ctrlKey && !e.altKey){ e.preventDefault(); setView(!PV.on); }
+  else if(e.key === "Escape" && PV.on) pvDisarm();
+});
+
+function arrange(){ if(PV.on){ S.patchPos = patchArrangement(); patchLayout(); save(); return; } ORDER.forEach(id=>P[id].max = null); S.pos = arrangement(); S.auto = true; ws.scrollLeft = ws.scrollTop = 0; layoutAll(); save(); }
 document.getElementById("reset").onclick = arrange;
+document.getElementById("reset").title = "Fit every module in the window (in Patch: tidy the blocks)";
 let rzT = 0;
-addEventListener("resize", ()=>{ clearTimeout(rzT); rzT = setTimeout(()=>{ if(S.auto && !ORDER.some(k=>P[k].max)) arrange(); else layoutAll(); }, 120); });
+addEventListener("resize", ()=>{ clearTimeout(rzT); rzT = setTimeout(()=>{ if(S.auto && !ORDER.some(k=>P[k].max) && !PV.on) arrange(); else layoutAll(); if(PV.on) patchLayout(); }, 120); });
 /* Esc chiude lo strumento ingrandito, anche quando la tastiera è dentro lo strumento */
 function escMax(e){ if(e.key === "Escape"){ const k = ORDER.find(k=>P[k].max); if(k) toggleMax(k); } }
 addEventListener("keydown", escMax);
