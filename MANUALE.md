@@ -95,12 +95,12 @@ Cosa riceve chi è collegato al Clock:
 
 ## 5. Mixer
 
-Un canale per strumento: **TWIN**, **NOST**, **JSB**, **DRUM**, **STOMP**. Nella versione ingrandita i nomi sono interi e i fader lunghi.
+Un canale per strumento: **TWIN**, **NOST**, **JSB**, **DRUM**, **STOMP**. Nella versione ingrandita i nomi sono interi, le manopole mostrano il valore e la corsia ha la scala in dB.
 
-- **PAN**: posizione stereo. Doppio clic per il centro.
-- **SND**: mandata verso la presa **SEND** del Mixer, presa dopo il fader. Doppio clic per azzerarla.
-- **Fader**: 0 dB a circa 4/5 della corsa, fino a +6 dB in cima, silenzio in fondo. Doppio clic per 0 dB.
-- **Indicatore** di livello, preso dopo fader e pan.
+- **PAN**: manopola della posizione stereo. Trascina in su o in giù (Maiusc per la regolazione fine) o usa la rotella del mouse. Doppio clic per il centro.
+- **SND**: manopola della mandata verso la presa **SEND** del Mixer, presa dopo il fader. Doppio clic per azzerarla.
+- **Fader**: una corsia larga con il cappuccio nel colore del canale. Trascina il cappuccio, oppure clicca in un punto della corsia per portarlo lì; la rotella del mouse lo sposta a piccoli passi; Maiusc rende tutto più fine. 0 dB è la tacca chiara a circa 4/5 della corsa, +6 dB in cima, silenzio in fondo. Doppio clic per 0 dB.
+- **Livello**: scorre dentro la corsia stessa, dietro il cappuccio (verde, giallo, rosso), preso dopo fader e pan.
 - **M** (mute) e **S** (solo).
 
 **Il fader agisce sull'uscita dello strumento**, ovunque sia collegata: il fader di Twin Core lo regola anche se passa dalla Stompbox.
@@ -189,6 +189,7 @@ Passa il mouse sopra la spia per vedere il dettaglio e la latenza. Se diventa ro
 | ⌘S / ⇧⌘S | Salva sessione / Salva come |
 | Doppio clic su un cavo | Stacca il cavo |
 | Doppio clic su fader, PAN, SND | Valore di partenza |
+| Maiusc mentre trascini o usi la rotella su fader e manopole | Regolazione fine |
 
 Dentro gli strumenti valgono le loro scorciatoie: tasti A–K in Twin Core e Nostos, spazio nella Drum Machine.
 

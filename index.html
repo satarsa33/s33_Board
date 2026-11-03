@@ -149,31 +149,43 @@ button.mini{padding:3px 9px;font-size:11px}
 .mst{font-size:10.5px;color:var(--mut);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* mixer */
 .mx{display:flex;gap:6px;height:100%;padding:8px 8px 10px}
-.ch{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;background:#171614;border-radius:7px;padding:5px 3px;box-shadow:inset 0 0 0 1px #2a2824}
+.ch{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px;background:#171614;border-radius:7px;padding:5px 3px 6px;box-shadow:inset 0 0 0 1px #2a2824;--kn:15px;--lane:16px;--ov:3px;--cap:22px}
+.pn.big .ch{gap:10px;padding:8px 8px 10px;--kn:34px;--lane:34px;--ov:9px;--cap:44px}
 .ch .nm{width:100%;text-align:center;font-size:9px;font-weight:800;letter-spacing:.1em;color:#fff;background:var(--c);border-radius:4px;padding:3px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ch .ft{flex:1;min-height:0;display:flex;gap:4px;justify-content:center;width:100%}
-.ch .vm{width:6px;border-radius:3px;background:#0b0b0a;position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px #000}
-.ch .vm i{position:absolute;inset:0;background:linear-gradient(to top,#3c9a6a 0 65%,#d2b42a 65% 85%,#d0452f 85%);clip-path:inset(100% 0 0 0)}
 .ch .nm .sh{display:none}
 .pn:not(.big) .ch .nm .fl{display:none}
 .pn:not(.big) .ch .nm .sh{display:inline}
 .pn:not(.big) .ch .nm{letter-spacing:0;padding:3px 0;font-size:8.5px;text-overflow:clip}
-.ch input[type=range]{writing-mode:vertical-lr;direction:rtl;width:22px;height:100%;margin:0;accent-color:var(--c);cursor:ns-resize}
+.pn.big .ch .nm{font-size:12px;padding:5px}
+/* manopoline PAN e SND nello stile di Twin Core */
+.ch .kns{display:flex;gap:2px;justify-content:center;width:100%}
+.pn.big .ch .kns{gap:14px}
+.ch .mk{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:ns-resize;touch-action:none}
+.ch .mk svg{display:block;width:var(--kn);height:var(--kn)}
+.ch .mk span{display:none;font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--mut)}
+.ch .mk b{display:none;font:600 10px/1 ui-monospace,Menlo,monospace;color:var(--ink)}
+.pn.big .ch .mk span,.pn.big .ch .mk b{display:block}
+/* corsia con il livello dentro e il cappuccio nel colore del canale */
+.ch .lane{position:relative;flex:1;min-height:40px;width:var(--lane);margin:calc(var(--cap) / 2) 0;border-radius:6px;background:#0b0b0a;box-shadow:inset 0 0 0 1px #000,inset 0 2px 6px #000;cursor:ns-resize;touch-action:none}
+.ch .lane .lv{position:absolute;left:3px;right:3px;top:3px;bottom:3px;border-radius:3px;background:linear-gradient(to top,#2f7a54 0 60%,#a48f22 60% 82%,#a33a28 82%);clip-path:inset(100% 0 0 0)}
+.ch .lane .tk{position:absolute;left:-4px;right:-4px;height:1px;background:rgba(244,239,228,.16);pointer-events:none}
+.ch .lane .tk.u{background:rgba(244,239,228,.6)}
+.pn.big .ch .lane .tk{left:-10px;right:-10px}
+.ch .lane .tk em{display:none;position:absolute;right:calc(100% + 4px);top:-5px;font:600 9px/1 ui-monospace,Menlo,monospace;color:var(--mut);font-style:normal;white-space:nowrap}
+.pn.big .ch .lane .tk em{display:block}
+.ch .cap{position:absolute;left:calc(-1 * var(--ov));right:calc(-1 * var(--ov));height:var(--cap);border-radius:5px;transform:translateY(-50%);pointer-events:none;
+  background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),var(--c) 50%,color-mix(in srgb,var(--c) 70%,#000));box-shadow:0 4px 8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.4)}
+.ch .cap:before,.ch .cap:after{content:"";position:absolute;left:22%;right:22%;height:1px;background:rgba(0,0,0,.35)}
+.ch .cap:before{top:28%}.ch .cap:after{bottom:28%}
+.ch .cap i{position:absolute;left:3px;right:3px;top:50%;height:2px;margin-top:-1px;background:#fff;border-radius:1px}
+.ch.off .cap{filter:saturate(.25) brightness(.7)}
+.ch.off .lane .lv{opacity:.35}
 .ch .db{font:600 9px/1 ui-monospace,Menlo,monospace;color:var(--mut);white-space:nowrap}
+.pn.big .ch .db{font-size:12px}
 .ch .bt{display:flex;gap:3px;width:100%}
-.ch .hk{width:100%;display:flex;flex-direction:column;align-items:stretch;gap:1px}
-.ch .hk span{font-size:7.5px;font-weight:700;letter-spacing:.1em;color:var(--mut);text-align:center}
-.ch .hk input[type=range]{writing-mode:horizontal-tb;direction:ltr;width:100%!important;height:12px;margin:0;accent-color:var(--c);cursor:ew-resize}
-.pn.big .ch .hk span{font-size:10px}
-.pn.big .ch .hk input[type=range]{height:18px;width:100%!important}
 .ch .bt button{flex:1;padding:3px 0;font-size:9px;font-weight:700;letter-spacing:0;border-radius:4px;min-width:0}
 .ch .bt .m.on{background:#d0452f;border-color:#d0452f;color:#fff}
 .ch .bt .s.on{background:#ebb53c;border-color:#ebb53c;color:#111}
-.ch.off .vm i{opacity:.35}
-.pn.big .ch .nm{font-size:12px;padding:5px}
-.pn.big .ch .vm{width:12px}
-.pn.big .ch input[type=range]{width:34px}
-.pn.big .ch .db{font-size:12px}
 .pn.big .ch .bt button{font-size:12px;padding:6px 0}
 .pn.big .mx{gap:14px;padding:16px}
 .led.beat{background:var(--clk);box-shadow:0 0 8px var(--clk)}
@@ -570,26 +582,56 @@ function buildMixerAudio(){
     requestAnimationFrame(loop);
   })();
 }
+/* posizione del fader (0–100) ↔ altezza nella corsia; 80 = 0 dB */
+const FD_TICKS = [[100,"+6"],[80,"0"],[80 - 10 / 0.75,"−10"],[80 - 20 / 0.75,"−20"],[80 - 40 / 0.75,"−40"]];
+function miniKnob(host, o){
+  const el = document.createElement("div"); el.className = "mk"; el.title = o.title;
+  el.innerHTML = `<svg viewBox="0 0 30 30"><path class="tr" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="3.4" stroke-linecap="round"/><path class="va" fill="none" stroke="var(--c)" stroke-width="3.4" stroke-linecap="round"/>
+    <circle cx="15" cy="15" r="8.5" fill="#2a2825" stroke="#000"/><line class="pt" x1="15" y1="15" stroke="#efe7d6" stroke-width="2.2" stroke-linecap="round"/></svg><span>${o.label}</span><b></b>`;
+  const R = 11.5, ang = x=>(-135 + x * 270) * Math.PI / 180, pt = (a, r)=>[15 + r * Math.sin(a), 15 - r * Math.cos(a)];
+  const arc = (x0, x1)=>{ const p0 = pt(ang(x0), R), p1 = pt(ang(x1), R); return `M${p0[0]} ${p0[1]} A${R} ${R} 0 ${(x1 - x0) * 270 > 180 ? 1 : 0} 1 ${p1[0]} ${p1[1]}`; };
+  el.querySelector(".tr").setAttribute("d", arc(0, 1));
+  const va = el.querySelector(".va"), ln = el.querySelector(".pt"), vt = el.querySelector("b");
+  const toX = v=>(v - o.min) / (o.max - o.min), zero = toX(o.zero);
+  const show = ()=>{ const x = toX(o.get()), a = Math.min(zero, x), b = Math.max(zero, x); va.setAttribute("d", b - a < 0.01 ? "" : arc(a, b));
+    const q = pt(ang(x), 6.5); ln.setAttribute("x2", q[0]); ln.setAttribute("y2", q[1]); vt.textContent = o.fmt(o.get()); };
+  const set = v=>{ o.set(Math.round(Math.max(o.min, Math.min(o.max, v)))); show(); mixApply(); save(); };
+  let y0 = 0, v0 = 0, on = false;
+  el.addEventListener("pointerdown", e=>{ e.preventDefault(); el.setPointerCapture(e.pointerId); y0 = e.clientY; v0 = o.get(); on = true; });
+  el.addEventListener("pointermove", e=>{ if(on) set(v0 + (y0 - e.clientY) * (o.max - o.min) / (e.shiftKey ? 600 : 150)); });
+  el.addEventListener("pointerup", ()=>{ on = false; }); el.addEventListener("pointercancel", ()=>{ on = false; });
+  el.addEventListener("wheel", e=>{ e.preventDefault(); set(o.get() - Math.sign(e.deltaY) * (e.shiftKey ? 1 : 4)); }, {passive:false});
+  el.addEventListener("dblclick", ()=>set(o.zero));
+  show(); host.appendChild(el); return show;
+}
 function mixerUI(bd){
   bd.innerHTML = `<div class="mx"></div>`; const mx = bd.firstChild;
   MIXCH.forEach(([id, name, short])=>{
     const c = S.mix[id], ch = document.createElement("div"); ch.className = "ch"; ch.style.setProperty("--c", DEFS[id].c);
-    ch.innerHTML = `<div class="nm" title="${name}"><span class="fl">${name}</span><span class="sh">${short}</span></div><div class="ft"><div class="vm"><i></i></div><input type="range" min="0" max="100" step="1" title="${name} volume (double-click: 0 dB)"></div>
+    ch.innerHTML = `<div class="nm" title="${name}"><span class="fl">${name}</span><span class="sh">${short}</span></div><div class="kns"></div>
+      <div class="lane" title="${name} volume · drag, mouse wheel (Shift = fine), double-click: 0 dB"><div class="lv"></div>
+        ${FD_TICKS.map(([v, l])=>`<div class="tk${l === "0" ? " u" : ""}" style="top:${100 - v}%"><em>${l}</em></div>`).join("")}<div class="cap"><i></i></div></div>
       <div class="db"></div><div class="bt"><button class="m" title="Mute">M</button><button class="s" title="Solo">S</button></div>`;
-    ch.insertAdjacentHTML("afterbegin", `<div class="hk"><span>PAN</span><input type="range" class="pan" min="-100" max="100" step="1" title="Pan (double-click: centre)"></div>
-      <div class="hk"><span>SND</span><input type="range" class="snd" min="0" max="100" step="1" title="Send to the Mixer's SEND jack, after the fader"></div>`);
-    ch.prepend(ch.querySelector(".nm"));
-    const pn = ch.querySelector(".pan"), sn = ch.querySelector(".snd");
-    pn.value = c.pan; sn.value = c.send;
-    pn.oninput = ()=>{ c.pan = +pn.value; mixApply(); save(); }; pn.ondblclick = ()=>{ c.pan = 0; pn.value = 0; mixApply(); save(); };
-    sn.oninput = ()=>{ c.send = +sn.value; mixApply(); save(); }; sn.ondblclick = ()=>{ c.send = 0; sn.value = 0; mixApply(); save(); };
-    const q = s=>ch.querySelector(s), f = q(".ft input");
-    f.value = c.v;
-    f.oninput = ()=>{ c.v = +f.value; mixApply(); save(); };
-    f.ondblclick = ()=>{ c.v = MXDEF.v; f.value = c.v; mixApply(); save(); };
+    const q = s=>ch.querySelector(s), kns = q(".kns"), lane = q(".lane"), cap = q(".cap");
+    miniKnob(kns, {label:"PAN", title:"Pan · double-click: centre", min:-100, max:100, zero:0, get:()=>c.pan, set:v=>{ c.pan = v; },
+      fmt:v=>v === 0 ? "C" : (v < 0 ? "L" : "R") + Math.abs(v)});
+    miniKnob(kns, {label:"SND", title:"Send to the Mixer's SEND jack, after the fader · double-click: 0", min:0, max:100, zero:0, get:()=>c.send, set:v=>{ c.send = v; }, fmt:v=>v + "%"});
+    const place = ()=>{ cap.style.top = (100 - c.v) + "%"; };
+    const setV = v=>{ c.v = Math.round(Math.max(0, Math.min(100, v)) * 10) / 10; place(); mixApply(); save(); };
+    const vAt = y=>{ const r = lane.getBoundingClientRect(); return (1 - (y - r.top) / r.height) * 100; };
+    let drag = null;
+    lane.addEventListener("pointerdown", e=>{ e.preventDefault(); lane.setPointerCapture(e.pointerId);
+      const r = lane.getBoundingClientRect(), capY = r.top + (100 - c.v) / 100 * r.height, onCap = Math.abs(e.clientY - capY) < cap.offsetHeight / 2 + 2;
+      if(!onCap) setV(vAt(e.clientY));
+      drag = { y:e.clientY, v:c.v, h:r.height }; });
+    lane.addEventListener("pointermove", e=>{ if(!drag) return; setV(drag.v + (drag.y - e.clientY) / drag.h * 100 * (e.shiftKey ? 0.2 : 1)); });
+    lane.addEventListener("pointerup", ()=>{ drag = null; }); lane.addEventListener("pointercancel", ()=>{ drag = null; });
+    lane.addEventListener("wheel", e=>{ e.preventDefault(); setV(c.v - Math.sign(e.deltaY) * (e.shiftKey ? 0.5 : 2)); }, {passive:false});
+    lane.addEventListener("dblclick", ()=>setV(MXDEF.v));
+    place();
     q(".m").onclick = ()=>{ c.m = !c.m; mixApply(); save(); };
     q(".s").onclick = ()=>{ c.s = !c.s; mixApply(); save(); };
-    mxUI[id] = { ch, f, db:q(".db"), bar:q(".vm i"), m:q(".m"), s:q(".s") };
+    mxUI[id] = { ch, db:q(".db"), bar:q(".lane .lv"), m:q(".m"), s:q(".s") };
     mx.appendChild(ch);
   });
   mixApply();

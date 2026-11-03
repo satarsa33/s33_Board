@@ -19,7 +19,7 @@ Made for **Chrome on the Mac** with a MIDI keyboard. It is a **PWA** in a single
 The service worker needs `http://localhost` or `https://`:
 
 ```bash
-cd "v15 (1.1.0)"
+cd "v16 (1.2.0)"
 python3 -m http.server 8000
 # open http://localhost:8000 in Chrome → ⋮ menu → Install S33 - Board
 ```
@@ -41,7 +41,7 @@ Browser storage is per address: a board opened as a file, from `localhost` or fr
 |---|---|---|
 | MIDI In, MIDI In 2 | MIDI out | Device and channel filter each |
 | Clock | CLK out | BPM, Play/Stop, Tap; internal or external MIDI clock |
-| Mixer | SEND out | Per instrument: fader, pan, send, meter, mute, solo |
+| Mixer | SEND out | Per instrument: wide fader with the level inside, pan and send knobs, mute, solo |
 | Twin Core | MIDI, CLK in · OUT | Mono 2-VCO synth; arpeggiator follows the Clock |
 | Nostos One | MIDI, CLK in · OUT | Polyphonic modular synth; arpeggiator and synced delay follow the Clock |
 | JSB | CLK in · OUT, P1–P4 MIDI out | 4-playhead sequencer; each playhead sends MIDI on its own channel |
