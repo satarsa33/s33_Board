@@ -90,12 +90,13 @@ Cosa riceve chi è collegato al Clock:
 | JSB | Tempo, Play/Stop, griglia |
 | Drum Machine | Tempo, Play/Stop, griglia; il primo step coincide con la battuta |
 | Stompbox | Tempo del delay = un battito (come il TAP) |
+| Granular | SYNC dei grani, delay a tempo, registrazione sulla battuta |
 
 ---
 
 ## 5. Mixer
 
-Un canale per strumento: **TWIN**, **NOST**, **JSB**, **DRUM**, **STOMP**. Nella versione ingrandita i nomi sono interi, le manopole mostrano il valore e la corsia ha la scala in dB.
+Un canale per strumento: **TWIN**, **NOST**, **JSB**, **DRUM**, **GRAN**, **STOMP**. Nella versione ingrandita i nomi sono interi, le manopole mostrano il valore e la corsia ha la scala in dB.
 
 - **PAN**: manopola della posizione stereo. Trascina in su o in giù (Maiusc per la regolazione fine) o usa la rotella del mouse. Doppio clic per il centro.
 - **SND**: manopola della mandata verso la presa **SEND** del Mixer, presa dopo il fader. Doppio clic per azzerarla.
@@ -126,7 +127,22 @@ Ogni strumento ha la sua interfaccia completa, con preset e manopole, ed è lo s
   - **OUT**: la voce interna della JSB. Per sentire solo i synth, abbassa o metti in mute il canale JSB nel Mixer.
   - **P1–P4**: le note di ogni playhead, sul canale 1–4. Le note lunghe durano davvero. Il Mute di un playhead ferma anche le sue note MIDI.
 - **Drum Machine**: Kick, Snare, Hat e Clap, pattern fino a 7/4 con griglia da 1/8 a 1/32. Prese: CLK, OUT, **MIDI**. Ogni colpo esce anche come nota sul canale 10: Kick 36, Snare 38, Clap 39, Hat 42. Collegata a un synth, gli fa suonare quelle note.
+- **Granular**: la Granular Machine a quattro tracce (vedi sotto). Prese: **IN**, **MIDI**, **CLK**, OUT.
 - **Stompbox**: chorus, flanger, delay e riverbero. Si accendono con l'interruttore e si riordinano trascinando ≡. Prese: IN, CLK, OUT. Nella board ricorda i suoi pedali. I pulsanti Microfono, File e Test funzionano anche qui, come sorgenti in più.
+
+### Granular
+
+Quattro tracce, ognuna con la sua catena **Material → Granular → Filter → Color → Space**. Si lavora su una traccia alla volta: clic su **1–4** nel blocco TRACKS (o tasti 1–4, o i pad 1–4 dell'LPD8) e tutti i blocchi mostrano quella traccia. **M** e **S** sono mute e solo delle tracce; **TRACK MIX** regola livello e pan di ognuna. Nel Mixer della board la Granular ha un solo canale, **GRAN**.
+
+- **Material**: il campione della traccia. **REC** registra da **IN** (quello che arriva dal cavo) oppure da **MIC**; **File** apre un file audio (anche trascinandolo sulla forma d'onda), **Demo** carica un suono di prova. Sulla forma d'onda trascini la porzione da usare; doppio clic per tornare al campione intero. **Reverse** lo suona al contrario, **Own / = track N** usa il campione di un'altra traccia.
+- **Granular**: il pad sceglie la posizione (in orizzontale) e la densità (in verticale); **Auto** li fa vagare da soli. **Grains / Loop**: grani accesi oppure la porzione in loop. **Sync**: i grani cadono sulla griglia del Clock e l'altezza del pad sceglie il ritmo (da 1/4 a 1/32).
+- **Filter**: Low, Band, High oppure **Tuned bank** (36 risonatori accordati su una scala, con Scale, Root, Width e Mix). **Motion** e **Rate** muovono il taglio.
+- **Color**: Drive, Crush, Tilt, Comp. **Space**: delay (libero o a tempo), riverbero, **Freeze**.
+- **Mod**: quattro modulatori per traccia. Clic sul nome per scegliere cosa muovono, clic su SINE/DRIFT/STEP per la forma, poi Speed e Amount. **Evolve** accelera o rallenta tutti i modulatori della traccia, **Events** aggiunge salti e freeze a caso.
+
+**Campionare uno strumento della board**: collega la sua uscita (per esempio **OUT** della Drum Machine) all'**IN** della Granular, scegli **IN** sotto *Rec from* e premi **REC**. Per sentire anche lo strumento, lascia collegata la sua uscita anche all'Output: le uscite possono avere più cavi. Con il Clock in Play la registrazione aspetta la battuta 1 successiva (*next bar*) e, quando premi di nuovo REC, si ferma alla fine della battuta: il campione dura un numero esatto di battute. A Clock fermo parte e si ferma subito. Al massimo 30 secondi.
+
+**LPD8**: collega MIDI In 2 (con il dispositivo LPD8) alla presa **MIDI** della Granular. Le assegnazioni sono quelle della Granular Machine: pad 1–4 scelgono la traccia, pad 5 cambia banco dei knob, pad 6 muta la traccia, pad 7 ferma tutto, pad 8 freeze; i knob K1–K8 sono segnati sulle manopole. **Learn**, **Pads** e **Reset** funzionano come nell'app.
 
 ---
 
@@ -163,7 +179,7 @@ In alto, il blocco **Session**:
 - **Open…**: apre una sessione e ricarica la board. Poi premi **Start audio**.
 - **New**: tutto torna allo stato iniziale. Chiede conferma con un secondo clic.
 
-Una sessione contiene cavi, disposizione, Clock, Mixer, MIDI, Output e lo stato di ogni strumento: suono di Twin Core, patch di Nostos, griglia della JSB, pattern della Drum Machine, pedali della Stompbox. Restano fuori le librerie dei tuoi preset e la skin di Nostos.
+Una sessione contiene cavi, disposizione, Clock, Mixer, MIDI, Output e lo stato di ogni strumento: suono di Twin Core, patch di Nostos, griglia della JSB, pattern della Drum Machine, pedali della Stompbox, tracce e **campioni** della Granular (per questo una sessione con campioni lunghi può pesare qualche MB). Restano fuori le librerie dei tuoi preset e la skin di Nostos.
 
 ---
 
@@ -191,7 +207,7 @@ Passa il mouse sopra la spia per vedere il dettaglio e la latenza. Se diventa ro
 | Doppio clic su fader, PAN, SND | Valore di partenza |
 | Maiusc mentre trascini o usi la rotella su fader e manopole | Regolazione fine |
 
-Dentro gli strumenti valgono le loro scorciatoie: tasti A–K in Twin Core e Nostos, spazio nella Drum Machine.
+Dentro gli strumenti valgono le loro scorciatoie: tasti A–K in Twin Core e Nostos, spazio nella Drum Machine, tasti 1–4 e spazio (ferma tutto) nella Granular.
 
 ---
 
@@ -200,7 +216,7 @@ Dentro gli strumenti valgono le loro scorciatoie: tasti A–K in Twin Core e Nos
 Il file funziona anche aperto con un doppio clic. Per averla come app sul Mac, con icona propria e funzionamento offline, serve un indirizzo http:
 
 ```bash
-cd "s33 - Board/v15 (1.1.0)"
+cd "s33 - Board/v17 (1.3.0)"
 python3 -m http.server 8000
 ```
 

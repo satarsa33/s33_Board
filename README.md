@@ -1,6 +1,6 @@
 # S33 - Board
 
-The **S33 instruments on one board**, connected with cables like a modular rack: **Twin Core**, **Nostos One**, **JSB**, **Drum Machine** and **Stompbox**, plus MIDI in/out, a common Clock, a Mixer and an Output with WAV recording.
+The **S33 instruments on one board**, connected with cables like a modular rack: **Twin Core**, **Nostos One**, **JSB**, **Drum Machine**, **Granular Machine** and **Stompbox**, plus MIDI in/out, a common Clock, a Mixer and an Output with WAV recording.
 
 Made for **Chrome on the Mac** with a MIDI keyboard. It is a **PWA** in a single HTML file (the instruments are built in), with no dependencies.
 
@@ -19,7 +19,7 @@ Made for **Chrome on the Mac** with a MIDI keyboard. It is a **PWA** in a single
 The service worker needs `http://localhost` or `https://`:
 
 ```bash
-cd "v16 (1.2.0)"
+cd "v17 (1.3.0)"
 python3 -m http.server 8000
 # open http://localhost:8000 in Chrome → ⋮ menu → Install S33 - Board
 ```
@@ -46,6 +46,7 @@ Browser storage is per address: a board opened as a file, from `localhost` or fr
 | Nostos One | MIDI, CLK in · OUT | Polyphonic modular synth; arpeggiator and synced delay follow the Clock |
 | JSB | CLK in · OUT, P1–P4 MIDI out | 4-playhead sequencer; each playhead sends MIDI on its own channel |
 | Drum Machine | CLK in · OUT, MIDI out | 4-voice drum machine; hits go out as MIDI (channel 10, GM notes) |
+| Granular | IN, MIDI, CLK in · OUT | 4-track granular sampler; records from its IN jack (or the mic) on the bar; LPD8 pads and knobs |
 | Stompbox | IN, CLK in · OUT | Chorus, flanger, delay (follows the Clock), reverb |
 | Output | IN | Volume, limiter, meters, **REC** to WAV (master or stems) |
 | MIDI Out | MIDI in | Sends to a Mac MIDI port (IAC bus, Logic…) |
@@ -79,6 +80,7 @@ python3 build/build.py \
   "../s33_Drum Machine/s33-Drum Machine-L01/s33-drum-machine-v8/index.html" \
   "../s33 - Nostos One Synth/v7 (1.5.0)/index.html" \
   "../s33 - JSB/v9/index.html" \
+  "../s33_Granular/s33_Granular Machine/v4 (Board)/index.html" \
   build/board-template.html "vNN (x.y.z)/index.html"
 ```
 
@@ -88,6 +90,7 @@ If an instrument changes in a place the script patches, it stops with *"atteso 1
 
 - One shared audio engine: with every instrument busy the Mac can run out of headroom; the **Load** light in the top bar turns amber or red. Lower Nostos One's voices first.
 - Twin Core's own Tempo knob is ignored while its CLK jack is patched.
+- Granular: the samples travel inside the session file, which can grow to a few MB.
 - Stems: Twin Core reaches the Stompbox through a cable, so the *Stompbox* stem already contains it.
 
 ## Use
