@@ -179,8 +179,10 @@ Il modulo **FM-1** porta nella board l'M-VAVE FM-1 collegato al Mac con il cavo 
 - **Attenzione al feedback**: se il Mac suona *attraverso* l'FM-1 (uscita audio di sistema = FM-1) il suono rientra dall'ingresso. Il modulo lo segnala: scegli un'altra uscita nelle Impostazioni di sistema.
 - **Le note suonate sull'FM-1** non gli vengono rimandate indietro, così non suonano doppie anche se il MIDI In ascolta "All inputs".
 - **Send MIDI clock**: con la presa CLK collegata al Clock, arpeggiatore e sequencer dell'FM-1 seguono il tempo della board; Play e Stop del Clock fanno partire e fermare l'FM-1.
-- **Prog ‹ ›**: manda un Program Change (se il firmware lo accetta).
-- **Controls**: otto manopole che mandano un CC ciascuna. Con *Edit* dai a ognuna un nome e il numero di CC, presi dalla guida ai CC MIDI dell'FM-1 di M-VAVE (vuoto = spenta). *Send* rimanda all'FM-1 tutti i valori, utile dopo aver aperto una sessione. Porta, canale, ingresso audio e manopole sono salvati nella sessione.
+- **Prog ‹ ›**: sceglie la voce dell'FM-1 (Program Change, voci 001–128).
+- **Effects**: i sei effetti dell'FM-1 (Filter, Reverb, Delay, Distortion, Chorus, Phaser), ognuno con il suo interruttore e tre parametri, presi dalla guida MIDI di M-VAVE. Filter e Reverb hanno il tipo su un pulsante che si cambia a ogni clic (LPF/BPF/HPF, Room/Hall/Plate). Cutoff va da 0 a 107, Q da 0 a 10, tutto il resto da 0 a 100. Doppio clic su una manopola: valore di partenza.
+- **Canale degli effetti**: l'FM-1 riceve gli effetti su un canale a parte (*effectch*, di default il 2), da impostare nel menu accanto a *Effects*. Deve essere diverso dal canale delle note: sullo stesso canale la rotella di modulazione (CC 1) cambierebbe il tipo di filtro, e il modulo lo segnala.
+- **Send**: rimanda all'FM-1 tutte le impostazioni degli effetti. Utile dopo aver aperto una sessione o acceso il synth, perché la board non legge lo stato dell'FM-1 e all'inizio le manopole possono non corrispondere a quello che senti. Porta, canali, ingresso audio ed effetti sono salvati nella sessione.
 - **Latenza**: il suono dell'FM-1 torna nella board con un piccolo ritardo (l'ingresso USB): rispetto agli strumenti interni può arrivare qualche millisecondo dopo.
 
 ## 9. Sessioni

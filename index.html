@@ -144,7 +144,12 @@ button.mini{padding:3px 9px;font-size:11px}
 .recopt select{flex:1;min-width:0;padding:3px 4px;font-size:11px}
 .recopt label{display:flex;align-items:center;gap:3px;white-space:nowrap;cursor:pointer}
 .mrow{display:flex;gap:5px}
-.fmm{overflow-y:auto;gap:7px}
+.fmm{overflow-y:auto;overflow-x:hidden;gap:7px}
+.fmm > *{min-width:0;flex-shrink:0}
+.fmm .row > *{min-width:0}
+.fmm .row .mini{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pn:not(.big) .fmm .fxlb{display:none}
+.pn.big .fmm > :not(.fmfx){width:100%;max-width:560px}
 .fmm .sp{flex:1}
 .fmm .mini.on{background:var(--c);color:#111;border-color:var(--c)}
 .fmm .pv{font:600 12px/1 ui-monospace,Menlo,monospace;min-width:28px;text-align:center}
@@ -160,11 +165,15 @@ button.mini{padding:3px 9px;font-size:11px}
 .fmk .mk span{font-size:8.5px;font-weight:700;letter-spacing:.06em;color:var(--mut);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fmk .mk b{font:600 9.5px/1 ui-monospace,Menlo,monospace;color:var(--ink)}
 .fmk .mk.off{opacity:.38}
-.fme{display:flex;flex-direction:column;gap:4px;flex:none}
-.fmer{display:flex;align-items:center;gap:5px}
-.fmer .fn{flex:1;min-width:0}
-.fmer .fc{width:52px}
-.fmer input{background:#0b0b0a;color:var(--ink);border:1px solid #34312c;border-radius:4px;padding:3px 5px;font:11px/1.2 inherit}
+.fmm select.fxch{width:58px;flex:none}
+.fmfx{display:grid;grid-template-columns:1fr;gap:7px;flex:none}
+.pn.big .fmfx{grid-template-columns:repeat(3,1fr)}
+.fxb{background:#171614;border-radius:7px;padding:6px;box-shadow:inset 0 0 0 1px #2a2824;display:flex;flex-direction:column;gap:6px;opacity:.72}
+.fxb.on{opacity:1;box-shadow:inset 0 0 0 1px var(--c)}
+.fxb .row{gap:5px}
+.fxb .fxon{flex:1;text-align:left}
+.fxb .fxty{min-width:48px}
+.fmm .fmk{grid-template-columns:repeat(3,1fr)}
 .mrow select:first-child{flex:1;min-width:0}
 .mrow select.ch{width:58px;flex:none}
 .mst{font-size:10.5px;color:var(--mut);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -498,9 +507,21 @@ function moutUI(bd){
    MIDI in: note e controlli verso il synth (sul suo canale). CLK in: MIDI Clock, Start e Stop verso il synth.
    OUT: il suono dell'FM-1, che rientra nella board dal suo ingresso audio USB. */
 const FM_RX = /fm[\s\-_]?1/i;
-const FM_CC_DEF = [["Mod",1],["Volume",7],["Expr",11],["—",null],["—",null],["—",null],["—",null],["—",null]];
-S.fm = Object.assign({dst:"", ch:1, ain:"", ainLabel:"", audio:false, trim:100, clk:true, prog:0,
-  cc:FM_CC_DEF.map(([n, cc])=>({n, cc, v:cc === 7 ? 100 : 0}))}, S.fm || {});
+/* effetti dell'FM-1: CC 0–23 sul canale FX (di default il 2), dalla guida MIDI di M-VAVE.
+   Ogni effetto ha un interruttore e tre parametri; Filter e Reverb hanno come primo parametro il tipo. */
+const FM_FX = [
+  {k:"flt", n:"Filter", sw:0, p:[{n:"Type", cc:1, max:2, d:0, lab:["LPF","BPF","HPF"]}, {n:"Cutoff", cc:2, max:107, d:107}, {n:"Q", cc:3, max:10, d:0}]},
+  {k:"rev", n:"Reverb", sw:4, p:[{n:"Type", cc:5, max:2, d:1, lab:["Room","Hall","Plate"]}, {n:"Decay", cc:6, max:100, d:50}, {n:"Mix", cc:7, max:100, d:30}]},
+  {k:"dly", n:"Delay", sw:8, p:[{n:"Decay", cc:9, max:100, d:40}, {n:"Rate", cc:10, max:100, d:50}, {n:"Mix", cc:11, max:100, d:30}]},
+  {k:"dst", n:"Distortion", sw:12, p:[{n:"Gain", cc:13, max:100, d:30}, {n:"Tone", cc:14, max:100, d:50}, {n:"Level", cc:15, max:100, d:70}]},
+  {k:"cho", n:"Chorus", sw:16, p:[{n:"Freq", cc:17, max:100, d:30}, {n:"Depth", cc:18, max:100, d:50}, {n:"Mix", cc:19, max:100, d:40}]},
+  {k:"pha", n:"Phaser", sw:20, p:[{n:"Freq", cc:21, max:100, d:30}, {n:"Depth", cc:22, max:100, d:50}, {n:"Mix", cc:23, max:100, d:40}]}
+];
+S.fm = Object.assign({dst:"", ch:1, fxch:2, ain:"", ainLabel:"", audio:false, trim:100, clk:true, prog:0}, S.fm || {});
+delete S.fm.cc;
+if(!S.fm.fx) S.fm.fx = {};
+FM_FX.forEach(e=>{ const s = S.fm.fx[e.k] = Object.assign({on:false, v:e.p.map(q=>q.d)}, S.fm.fx[e.k] || {});
+  s.v = e.p.map((q, i)=>Math.max(0, Math.min(q.max, typeof s.v[i] === "number" ? s.v[i] : q.d))); });
 const FM = { src:null, stream:null, trim:null, an:null, ui:{}, k:0, clkOn:false, edit:false };
 let midiFromName = "";
 function fmPort(){ if(!midiAcc || !S.fm.dst) return null; let p = null; midiAcc.outputs.forEach(o=>{ if(o.name === S.fm.dst) p = o; }); return p; }
@@ -520,7 +541,10 @@ function fmSend(data, at){
   if(fmRaw(d, at)){ const ms = at != null && ctx ? Math.max(0, (at - ctx.currentTime) * 1000) : 0; setTimeout(()=>flash(FM.ui.led), ms); }
 }
 function fmPanic(){ fmRaw([fmSt(0xB0), 123, 0]); fmRaw([fmSt(0xB0), 120, 0]); }
-function fmCC(i){ const k = S.fm.cc[i]; if(k.cc == null) return; if(fmRaw([fmSt(0xB0), k.cc, k.v])) flash(FM.ui.led); }
+const fxSt = ()=>0xB0 | (S.fm.fxch - 1);
+function fmFxSw(e){ if(fmRaw([fxSt(), e.sw, S.fm.fx[e.k].on ? 127 : 0])) flash(FM.ui.led); }
+function fmFxPar(e, i){ if(fmRaw([fxSt(), e.p[i].cc, S.fm.fx[e.k].v[i]])) flash(FM.ui.led); }
+function fmFxAll(){ FM_FX.forEach(e=>{ fmFxSw(e); e.p.forEach((q, i)=>fmFxPar(e, i)); }); }
 function fmProg(){ if(fmRaw([fmSt(0xC0), S.fm.prog])) flash(FM.ui.led); }
 
 /* MIDI Clock: 24 impulsi per battito sulla stessa griglia del Clock della board, programmati un po' in anticipo */
@@ -603,24 +627,27 @@ function fmShow(){
   u.aud.classList.toggle("on", !!S.fm.audio); u.aud.textContent = S.fm.audio ? "Audio in ON" : "Audio in OFF";
   u.pv.textContent = String(S.fm.prog + 1).padStart(3, "0"); u.clk.checked = !!S.fm.clk;
   u.trim.value = S.fm.trim; u.trv.textContent = S.fm.trim + "%";
-  u.edb.classList.toggle("on", FM.edit); u.fme.hidden = !FM.edit;
+  u.fxch.value = String(S.fm.fxch); fmChWarn();
 }
-function fmKnobs(){
-  const u = FM.ui; u.fmk.innerHTML = "";
-  S.fm.cc.forEach((k, i)=>{
-    miniKnob(u.fmk, {label:k.n || "—", title:k.cc == null ? "Not assigned: press Edit to give it a CC number" : k.n + " · CC " + k.cc + " · drag or mouse wheel",
-      min:0, max:127, zero:0, get:()=>k.v, set:v=>{ k.v = v; fmCC(i); }, fmt:v=>k.cc == null ? "off" : String(v)});
-    if(k.cc == null) u.fmk.lastChild.classList.add("off");
-  });
-  u.fme.innerHTML = `<div class="small">CC numbers: see M-VAVE's FM-1 MIDI CC guide</div>` + S.fm.cc.map((k, i)=>
-    `<div class="fmer"><input class="fn" data-i="${i}" maxlength="8" value="${esc(k.n)}" title="Name"><span class="lbl">CC</span><input class="fc" data-i="${i}" type="number" min="0" max="119" value="${k.cc == null ? "" : k.cc}" title="CC number (empty = off)"></div>`).join("");
-  u.fme.querySelectorAll("input").forEach(el=>el.onchange = ()=>{
-    const k = S.fm.cc[+el.dataset.i];
-    if(el.classList.contains("fn")) k.n = el.value.trim() || "—";
-    else { const n = parseInt(el.value, 10); k.cc = isNaN(n) ? null : Math.max(0, Math.min(119, n)); }
-    save(); fmKnobs();
+function fmFxUI(){
+  const u = FM.ui; u.fx.innerHTML = "";
+  FM_FX.forEach(e=>{
+    const s = S.fm.fx[e.k], b = document.createElement("div"); b.className = "fxb";
+    const ty = e.p[0].lab;
+    b.innerHTML = `<div class="row"><button class="mini fxon" title="${e.n} on/off (CC ${e.sw})">${e.n}</button>${ty ? `<button class="mini fxty" title="${e.n} type (CC ${e.p[0].cc})"></button>` : ""}</div><div class="fmk"></div>`;
+    const on = b.querySelector(".fxon"), tyb = b.querySelector(".fxty"), kn = b.querySelector(".fmk");
+    const paint = ()=>{ b.classList.toggle("on", s.on); on.classList.toggle("on", s.on); if(tyb) tyb.textContent = ty[s.v[0]]; };
+    on.onclick = ()=>{ s.on = !s.on; paint(); save(); fmFxSw(e); };
+    if(tyb) tyb.onclick = ()=>{ s.v[0] = (s.v[0] + 1) % ty.length; paint(); save(); fmFxPar(e, 0); };
+    e.p.forEach((q, i)=>{ if(q.lab) return;
+      miniKnob(kn, {label:q.n, title:e.n + " " + q.n + " · CC " + q.cc + " (0–" + q.max + ") · drag, wheel (Shift = fine), double-click: default",
+        min:0, max:q.max, zero:0, get:()=>s.v[i], set:v=>{ if(v === s.v[i]) return; s.v[i] = v; fmFxPar(e, i); }, fmt:v=>String(v)});
+      // doppio clic: torna al valore di partenza (non a zero, che spegnerebbe per esempio il Cutoff)
+      kn.lastChild.addEventListener("dblclick", ev=>{ ev.stopImmediatePropagation(); s.v[i] = q.d; fmFxPar(e, i); save(); fmFxUI(); }, true); });
+    paint(); u.fx.appendChild(b);
   });
 }
+function fmChWarn(){ const u = FM.ui; if(u.fxw) u.fxw.hidden = S.fm.ch !== S.fm.fxch; }
 function fmUI(bd){
   bd.innerHTML = `<div class="mod fmm">
     <div class="row"><span class="led"></span><span class="mst"></span><button class="mini" data-a="panic" title="All Notes Off to the FM-1">Panic</button></div>
@@ -631,13 +658,15 @@ function fmUI(bd){
     <div class="row"><span class="lbl">Trim</span><input type="range" class="trim" min="0" max="200" step="1" title="Input level from the FM-1"><b class="trv small"></b></div>
     <label class="small fmcl" title="Send MIDI Clock, Start and Stop when the CLK jack is patched"><input type="checkbox" class="clk"> Send MIDI clock</label>
     <div class="row"><span class="lbl">Prog</span><button class="mini" data-a="pm" title="Previous program">‹</button><b class="pv"></b><button class="mini" data-a="pp" title="Next program">›</button></div>
-    <div class="row"><span class="lbl">Controls</span><span class="sp"></span><button class="mini" data-a="edit" title="Names and CC numbers of the knobs">Edit</button><button class="mini" data-a="all" title="Send every knob value to the FM-1">Send</button></div>
-    <div class="fmk"></div><div class="fme" hidden></div></div>`;
+    <div class="row"><span class="lbl fxlb">Effects</span><select class="fxch" title="FM-1 effect channel (effectch, default 2)">${optHtml(CH_OPTS.slice(1))}</select><span class="sp"></span><button class="mini" data-a="all" title="Send every effect setting to the FM-1">Send</button></div>
+    <div class="small fxw" hidden>⚠ Notes and effects on the same channel: the mod wheel (CC 1) will change the filter type</div>
+    <div class="fmfx"></div></div>`;
   const q = s=>bd.querySelector(s), u = FM.ui;
   Object.assign(u, { led:q(".led"), st:q(".mst"), sel:q("select.dev"), ch:q("select.ch"), aud:q('[data-a="audio"]'), ast:q(".fas"), ain:q("select.ain"),
-    lv:q(".fmlv i"), trim:q(".trim"), trv:q(".trv"), clk:q(".clk"), pv:q(".pv"), edb:q('[data-a="edit"]'), fmk:q(".fmk"), fme:q(".fme") });
+    lv:q(".fmlv i"), trim:q(".trim"), trv:q(".trv"), clk:q(".clk"), pv:q(".pv"), fxch:q("select.fxch"), fxw:q(".fxw"), fx:q(".fmfx") });
   u.sel.onchange = ()=>{ fmPanic(); S.fm.dst = u.sel.value; save(); fmFillMidi(); };
-  u.ch.onchange = ()=>{ fmPanic(); S.fm.ch = +u.ch.value; save(); };
+  u.ch.onchange = ()=>{ fmPanic(); S.fm.ch = +u.ch.value; save(); fmChWarn(); };
+  u.fxch.onchange = ()=>{ S.fm.fxch = +u.fxch.value; save(); fmChWarn(); };
   u.ain.onchange = ()=>{ const o = u.ain.selectedOptions[0]; S.fm.ain = u.ain.value; S.fm.ainLabel = u.ain.value ? o.textContent.replace(/ \(not connected\)$/, "") : ""; save(); if(S.fm.audio) fmAudioOpen(); };
   u.trim.oninput = ()=>{ S.fm.trim = +u.trim.value; u.trv.textContent = S.fm.trim + "%"; if(FM.trim && ctx) FM.trim.gain.setTargetAtTime(S.fm.trim / 100, ctx.currentTime, 0.02); save(); };
   u.trim.ondblclick = ()=>{ u.trim.value = 100; u.trim.oninput(); };
@@ -647,10 +676,9 @@ function fmUI(bd){
     if(a === "panic") fmPanic();
     else if(a === "audio"){ if(S.fm.audio){ fmAudioClose(); S.fm.audio = false; save(); fmShow(); fmAStatus("Audio in off"); } else fmAudioOpen(); }
     else if(a === "pm" || a === "pp"){ S.fm.prog = (S.fm.prog + (a === "pp" ? 1 : 127)) % 128; save(); fmShow(); fmProg(); }
-    else if(a === "edit"){ FM.edit = !FM.edit; fmShow(); }
-    else if(a === "all") S.fm.cc.forEach((k, i)=>fmCC(i));
+    else if(a === "all") fmFxAll();
   });
-  fmKnobs(); fmShow(); fmFillMidi(); fmAStatus("Audio in off");
+  fmFxUI(); fmShow(); fmFillMidi(); fmAStatus("Audio in off");
 }
 
 /* ===== Clock =====
