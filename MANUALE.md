@@ -169,6 +169,20 @@ Manda a un dispositivo del Mac le note che riceve dalla sua presa: di serie, que
 
 ---
 
+## 8b. FM-1 (synth hardware)
+
+Il modulo **FM-1** porta nella board l'M-VAVE FM-1 collegato al Mac con il cavo USB-C. Il Mac lo vede due volte: come porta MIDI e come ingresso audio.
+
+- **Prese**: *MIDI* (note, pitch bend e controlli verso il synth), *CLK* (MIDI Clock, Start e Stop), *OUT* (il suono dell'FM-1 che rientra nella board). Di partenza l'OUT è collegato all'Output.
+- **Porta e canale**: dopo *Start audio* la board cerca da sola una porta che si chiama "FM-1"; altrimenti la scegli dal menu. Il canale è quello su cui ascolta l'FM-1 (di solito 1): tutto quello che arriva dai cavi viene mandato su quel canale.
+- **Audio in**: il pulsante apre l'ingresso audio USB dell'FM-1 (al primo uso Chrome chiede il permesso). Il menu sotto serve se il nome non viene riconosciuto. *Trim* regola il livello in ingresso (doppio clic: 100%). L'FM-1 ha anche un canale nel **Mixer** e uno stem nella registrazione.
+- **Attenzione al feedback**: se il Mac suona *attraverso* l'FM-1 (uscita audio di sistema = FM-1) il suono rientra dall'ingresso. Il modulo lo segnala: scegli un'altra uscita nelle Impostazioni di sistema.
+- **Le note suonate sull'FM-1** non gli vengono rimandate indietro, così non suonano doppie anche se il MIDI In ascolta "All inputs".
+- **Send MIDI clock**: con la presa CLK collegata al Clock, arpeggiatore e sequencer dell'FM-1 seguono il tempo della board; Play e Stop del Clock fanno partire e fermare l'FM-1.
+- **Prog ‹ ›**: manda un Program Change (se il firmware lo accetta).
+- **Controls**: otto manopole che mandano un CC ciascuna. Con *Edit* dai a ognuna un nome e il numero di CC, presi dalla guida ai CC MIDI dell'FM-1 di M-VAVE (vuoto = spenta). *Send* rimanda all'FM-1 tutti i valori, utile dopo aver aperto una sessione. Porta, canale, ingresso audio e manopole sono salvati nella sessione.
+- **Latenza**: il suono dell'FM-1 torna nella board con un piccolo ritardo (l'ingresso USB): rispetto agli strumenti interni può arrivare qualche millisecondo dopo.
+
 ## 9. Sessioni
 
 In alto, il blocco **Session**:

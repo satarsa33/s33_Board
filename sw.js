@@ -1,5 +1,5 @@
 /* S33 - Board: funziona anche offline. Dopo ogni aggiornamento cambia VERSIONE. */
-const VERSIONE = "s33-board-1.3.0";
+const VERSIONE = "s33-board-1.4.0";
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon.svg", "./icons/icon-192.png", "./icons/icon-512.png",
   "./icons/icon-maskable-512.png", "./icons/apple-touch-icon.png", "./icons/favicon-32.png"];
 self.addEventListener("install", e=>{ e.waitUntil(caches.open(VERSIONE).then(c=>c.addAll(FILES))); self.skipWaiting(); });

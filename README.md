@@ -1,6 +1,6 @@
 # S33 - Board
 
-The **S33 instruments on one board**, connected with cables like a modular rack: **Twin Core**, **Nostos One**, **JSB**, **Drum Machine**, **Granular Machine** and **Stompbox**, plus MIDI in/out, a common Clock, a Mixer and an Output with WAV recording.
+The **S33 instruments on one board**, connected with cables like a modular rack: **Twin Core**, **Nostos One**, **JSB**, **Drum Machine**, **Granular Machine**, **Stompbox** and the hardware **M-VAVE FM-1**, plus MIDI in/out, a common Clock, a Mixer and an Output with WAV recording.
 
 Made for **Chrome on the Mac** with a MIDI keyboard. It is a **PWA** in a single HTML file (the instruments are built in), with no dependencies.
 
@@ -19,7 +19,7 @@ Made for **Chrome on the Mac** with a MIDI keyboard. It is a **PWA** in a single
 The service worker needs `http://localhost` or `https://`:
 
 ```bash
-cd "v17 (1.3.0)"
+cd "v18 (1.4.0)"
 python3 -m http.server 8000
 # open http://localhost:8000 in Chrome → ⋮ menu → Install S33 - Board
 ```
@@ -48,6 +48,7 @@ Browser storage is per address: a board opened as a file, from `localhost` or fr
 | Drum Machine | CLK in · OUT, MIDI out | 4-voice drum machine; hits go out as MIDI (channel 10, GM notes) |
 | Granular | IN, MIDI, CLK in · OUT | 4-track granular sampler; records from its IN jack (or the mic) on the bar; LPD8 pads and knobs |
 | Stompbox | IN, CLK in · OUT | Chorus, flanger, delay (follows the Clock), reverb |
+| FM-1 | MIDI, CLK in · OUT | The M-VAVE FM-1 over USB-C: notes and CCs to the synth, MIDI Clock, its USB audio back into the board |
 | Output | IN | Volume, limiter, meters, **REC** to WAV (master or stems) |
 | MIDI Out | MIDI in | Sends to a Mac MIDI port (IAC bus, Logic…) |
 

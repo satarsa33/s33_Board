@@ -144,6 +144,27 @@ button.mini{padding:3px 9px;font-size:11px}
 .recopt select{flex:1;min-width:0;padding:3px 4px;font-size:11px}
 .recopt label{display:flex;align-items:center;gap:3px;white-space:nowrap;cursor:pointer}
 .mrow{display:flex;gap:5px}
+.fmm{overflow-y:auto;gap:7px}
+.fmm .sp{flex:1}
+.fmm .mini.on{background:var(--c);color:#111;border-color:var(--c)}
+.fmm .pv{font:600 12px/1 ui-monospace,Menlo,monospace;min-width:28px;text-align:center}
+.fmm .trim{flex:1;min-width:0}
+.fmcl{display:flex;align-items:center;gap:6px}
+.fmlv{height:6px;flex:none;border-radius:3px;background:#0b0b0a;box-shadow:inset 0 0 0 1px #000;overflow:hidden}
+.fmlv i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2f7a54,#a48f22 75%,#a33a28)}
+.fmk{display:grid;grid-template-columns:repeat(4,1fr);gap:7px 2px;flex:none}
+.pn.big .fmk{grid-template-columns:repeat(8,1fr)}
+.fmk .mk{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:ns-resize;touch-action:none;min-width:0}
+.fmk .mk svg{display:block;width:28px;height:28px}
+.pn.big .fmk .mk svg{width:42px;height:42px}
+.fmk .mk span{font-size:8.5px;font-weight:700;letter-spacing:.06em;color:var(--mut);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fmk .mk b{font:600 9.5px/1 ui-monospace,Menlo,monospace;color:var(--ink)}
+.fmk .mk.off{opacity:.38}
+.fme{display:flex;flex-direction:column;gap:4px;flex:none}
+.fmer{display:flex;align-items:center;gap:5px}
+.fmer .fn{flex:1;min-width:0}
+.fmer .fc{width:52px}
+.fmer input{background:#0b0b0a;color:var(--ink);border:1px solid #34312c;border-radius:4px;padding:3px 5px;font:11px/1.2 inherit}
 .mrow select:first-child{flex:1;min-width:0}
 .mrow select.ch{width:58px;flex:none}
 .mst{font-size:10.5px;color:var(--mut);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -233,6 +254,7 @@ const DEFS = {
   midi: { name:"MIDI In", c:"#5aa0ff", ports:[{p:"midiOut",dir:"out",t:"midi",l:"MIDI"}], ui:midiUI },
   midi2:{ name:"MIDI In 2", c:"#5aa0ff", ports:[{p:"midiOut",dir:"out",t:"midi",l:"MIDI"}], ui:midiUI },
   mout: { name:"MIDI Out", c:"#5aa0ff", ports:[{p:"in",dir:"in",t:"midi",l:"MIDI"}], ui:moutUI },
+  fm:   { name:"FM-1", c:"#e3b341", ports:[{p:"midiIn",dir:"in",t:"midi",l:"MIDI"},{p:"clkIn",dir:"in",t:"clock",l:"CLK"},{p:"out",dir:"out",t:"audio",l:"OUT"}], ui:fmUI },
   clock:{ name:"Clock", c:"#5fcf86", ports:[{p:"clkOut",dir:"out",t:"clock",l:"CLK"}], ui:clockUI },
   tc:   { name:"Twin Core", c:"#d29a2a", ports:[{p:"midiIn",dir:"in",t:"midi",l:"MIDI"},{p:"clkIn",dir:"in",t:"clock",l:"CLK"},{p:"out",dir:"out",t:"audio",l:"OUT"}], html:APP_TC, midiIn:true },
   sb:   { name:"Stompbox", c:"#2a9d8f", ports:[{p:"in",dir:"in",t:"audio",l:"IN"},{p:"clkIn",dir:"in",t:"clock",l:"CLK"},{p:"out",dir:"out",t:"audio",l:"OUT"}], html:APP_SB, dw:1040, dh:600 },
@@ -245,7 +267,7 @@ const DEFS = {
   outm: { name:"Output", c:"#c0453a", ports:[{p:"in",dir:"in",t:"audio",l:"IN"}], ui:outUI },
   mixer:{ name:"Mixer", c:"#9a948a", ports:[{p:"send",dir:"out",t:"audio",l:"SEND"}], ui:mixerUI }
 };
-const ORDER = ["midi","midi2","clock","mixer","tc","sb","dm","no","jsb","gr","outm","mout"];
+const ORDER = ["midi","midi2","clock","mixer","tc","sb","dm","no","jsb","gr","fm","outm","mout"];
 const DEFAULT_CABLES = [
   {a:{m:"midi",p:"midiOut"}, b:{m:"tc",p:"midiIn"}},
   {a:{m:"clock",p:"clkOut"}, b:{m:"tc",p:"clkIn"}},
@@ -259,7 +281,8 @@ const DEFAULT_CABLES = [
   {a:{m:"clock",p:"clkOut"}, b:{m:"jsb",p:"clkIn"}},
   {a:{m:"jsb",p:"out"},      b:{m:"outm",p:"in"}},
   {a:{m:"clock",p:"clkOut"}, b:{m:"gr",p:"clkIn"}},
-  {a:{m:"gr",p:"out"},       b:{m:"outm",p:"in"}}
+  {a:{m:"gr",p:"out"},       b:{m:"outm",p:"in"}},
+  {a:{m:"fm",p:"out"},       b:{m:"outm",p:"in"}}
 ];
 const KEY = "s33-board-v2";
 const LAYOUT_V = 7;   // cambia quando cambia la disposizione d'insieme
@@ -291,7 +314,8 @@ function arrangement(){
     dm:   {x:c2,    y:r2,  w:cellW, h:cellH},
     gr:   {x:c3,    y:r2,  w:cellW, h:cellH},
     outm: {x:c4, y:top, w:oW, h:Math.min(236, cellH)},
-    mout: {x:c4, y:r2, w:oW, h:hMo}
+    mout: {x:c4, y:r2, w:oW, h:hMo},
+    fm:   {x:c4, y:r2 + hMo + gy, w:oW, h:Math.max(170, H - 18 - (r2 + hMo + gy))}
   };
 }
 function defaults(){ return { pos:arrangement(), auto:true, layoutV:LAYOUT_V, cables:JSON.parse(JSON.stringify(DEFAULT_CABLES)) }; }
@@ -387,6 +411,7 @@ function fillMidiSel(names){
       : c.src && !names.includes(c.src) ? "Device not connected" : names.length + (names.length === 1 ? " device" : " devices"); });
 }
 function fillOutSel(){
+  fmFillMidi();
   const u = moUI; if(!u.sel) return; const c = S.midiOut;
   u.sel.innerHTML = optHtml(devOpts(outNames, c.dst, "— none —")); u.sel.value = c.dst; u.ch.value = String(c.ch);
   u.st.textContent = !ctx ? "Start audio to read devices" : !outNames.length ? "No MIDI output" : c.dst ? (outNames.includes(c.dst) ? "Sending" : "Device not connected") : "Choose a device";
@@ -397,6 +422,7 @@ function midiSend(from, data, at, port){
     if(c.a.m !== from || portOf(c.a).t !== "midi" || (port && c.a.p !== port)) return;
     if(typeof patchFlash === "function"){ patchFlash(c.a.m, "mi"); patchFlash(c.b.m, "mi"); }
     if(c.b.m === "mout"){ moutSend(data, at); return; }
+    if(c.b.m === "fm"){ fmSend(data, at); return; }
     const inp = S33mods[c.b.m].midiInput; if(!inp || !inp.onmidimessage) return;
     const go = ()=>{ try{ inp.onmidimessage({data:new Uint8Array(data), target:inp, timeStamp:performance.now()}); }catch(e){ console.warn(e); } };
     const ms = at != null && ctx ? (at - ctx.currentTime) * 1000 : 0;
@@ -412,6 +438,7 @@ function moutSend(data, at){
   const ms = ts ? ts - performance.now() : 0; setTimeout(()=>flash(moUI.led), Math.max(0, ms));
 }
 function allNotesOff(modId){
+  if(modId === "fm"){ fmPanic(); return; }
   if(modId === "mout"){ if(S.midiOut.dst) for(let ch=0; ch<16; ch++) moutSend([0xB0|ch,123,0]); return; }
   const inp = S33mods[modId] && S33mods[modId].midiInput;
   if(inp && inp.onmidimessage) for(let ch=0; ch<16; ch++) try{ inp.onmidimessage({data:new Uint8Array([0xB0|ch,123,0])}); }catch(e){}
@@ -419,6 +446,9 @@ function allNotesOff(modId){
 /* i moduli possono emettere MIDI dalla loro presa (per ora la Drum Machine) */
 ORDER.forEach(id=>{ S33mods[id].midiEmit = (data, at)=>midiSend(id, data, at); S33mods[id].midiEmitPort = (port, data, at)=>midiSend(id, data, at, port); });
 function midiFrom(name, data){
+  midiFromName = name; try{ midiFrom2(name, data); } finally { midiFromName = ""; }
+}
+function midiFrom2(name, data){
   const st = data[0], ch = st >= 0x80 && st < 0xF0 ? (st & 15) + 1 : 0;
   MIDI_INS.forEach(id=>{ const c = S.midiIn[id];
     if(c.src && c.src !== name) return;
@@ -461,6 +491,166 @@ function moutUI(bd){
   moUI.sel.onchange = ()=>{ allNotesOff("mout"); S.midiOut.dst = moUI.sel.value; save(); fillOutSel(); };
   moUI.ch.onchange = ()=>{ allNotesOff("mout"); S.midiOut.ch = +moUI.ch.value; save(); };
   fillOutSel();
+}
+
+/* ===== FM-1 =====
+   Il synth hardware M-VAVE FM-1 come modulo: via USB-C il Mac lo vede come porta MIDI e come ingresso audio.
+   MIDI in: note e controlli verso il synth (sul suo canale). CLK in: MIDI Clock, Start e Stop verso il synth.
+   OUT: il suono dell'FM-1, che rientra nella board dal suo ingresso audio USB. */
+const FM_RX = /fm[\s\-_]?1/i;
+const FM_CC_DEF = [["Mod",1],["Volume",7],["Expr",11],["—",null],["—",null],["—",null],["—",null],["—",null]];
+S.fm = Object.assign({dst:"", ch:1, ain:"", ainLabel:"", audio:false, trim:100, clk:true, prog:0,
+  cc:FM_CC_DEF.map(([n, cc])=>({n, cc, v:cc === 7 ? 100 : 0}))}, S.fm || {});
+const FM = { src:null, stream:null, trim:null, an:null, ui:{}, k:0, clkOn:false, edit:false };
+let midiFromName = "";
+function fmPort(){ if(!midiAcc || !S.fm.dst) return null; let p = null; midiAcc.outputs.forEach(o=>{ if(o.name === S.fm.dst) p = o; }); return p; }
+function fmAuto(){ if(S.fm.dst) return; const n = outNames.find(x=>FM_RX.test(x)); if(n){ S.fm.dst = n; save(); } }
+function fmRaw(d, at){
+  const p = fmPort(); if(!p) return false;
+  const ts = at != null && ctx ? performance.now() + Math.max(0, (at - ctx.currentTime) * 1000) : undefined;
+  try{ p.send(d, ts); }catch(e){ console.warn(e); return false; }
+  return true;
+}
+const fmSt = n=>n | (S.fm.ch - 1);
+/* note e controlli dai cavi MIDI: il canale diventa quello dell'FM-1; quello che arriva dall'FM-1 stesso non gli torna indietro */
+function fmSend(data, at){
+  if(midiFromName && FM_RX.test(midiFromName)) return;
+  const d = Array.from(data); if(!(d[0] >= 0x80 && d[0] < 0xF0)) return;
+  d[0] = fmSt(d[0] & 0xF0);
+  if(fmRaw(d, at)){ const ms = at != null && ctx ? Math.max(0, (at - ctx.currentTime) * 1000) : 0; setTimeout(()=>flash(FM.ui.led), ms); }
+}
+function fmPanic(){ fmRaw([fmSt(0xB0), 123, 0]); fmRaw([fmSt(0xB0), 120, 0]); }
+function fmCC(i){ const k = S.fm.cc[i]; if(k.cc == null) return; if(fmRaw([fmSt(0xB0), k.cc, k.v])) flash(FM.ui.led); }
+function fmProg(){ if(fmRaw([fmSt(0xC0), S.fm.prog])) flash(FM.ui.led); }
+
+/* MIDI Clock: 24 impulsi per battito sulla stessa griglia del Clock della board, programmati un po' in anticipo */
+function fmPer(){ return 60 / CLK.bpm / 24; }
+function fmClockTick(){
+  if(!ctx || !CLK.running || !S.fm.clk || !FM.clkOn) return;
+  const now = ctx.currentTime, per = fmPer();
+  let t = CLK.origin + FM.k * per;
+  if(t < now - 0.05){ FM.k = Math.ceil((now - CLK.origin) / per); t = CLK.origin + FM.k * per; }
+  while(t < now + 0.12){ fmRaw([0xF8], t); FM.k++; t = CLK.origin + FM.k * per; }
+}
+S33mods.fm.onClock = bpm=>{ const on = !!bpm; if(FM.clkOn && !on && CLK.running && S.fm.clk) fmRaw([0xFC]); FM.clkOn = on; };
+S33mods.fm.onTransport = run=>{
+  if(!S.fm.clk || !ctx) return;
+  if(!run){ fmRaw([0xFC]); return; }
+  // si parte su un battito: subito se il Clock è appena partito, altrimenti sul prossimo
+  const per = fmPer(); FM.k = Math.max(0, Math.ceil((ctx.currentTime + 0.02 - CLK.origin) / (per * 24)) * 24);
+  fmRaw([0xFA], CLK.origin + FM.k * per - 0.001); fmClockTick();
+};
+
+/* audio dall'FM-1: ingresso USB del Mac, senza elaborazioni del browser */
+async function fmAudioList(){ try{ return (await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind === "audioinput"); }catch(e){ return []; } }
+function fmAStatus(t){ if(FM.ui.ast) FM.ui.ast.textContent = t; }
+function fmFillAudio(devs){
+  const u = FM.ui; if(!u.ain) return;
+  const o = [["", "Auto (FM-1)"]].concat(devs.map((d, i)=>[d.deviceId, d.label || "Input " + (i + 1)]));
+  if(S.fm.ain && !devs.some(d=>d.deviceId === S.fm.ain)) o.push([S.fm.ain, (S.fm.ainLabel || "Input") + " (not connected)"]);
+  u.ain.innerHTML = optHtml(o); u.ain.value = S.fm.ain;
+}
+function fmAudioClose(){
+  try{ if(FM.src) FM.src.disconnect(); }catch(e){} FM.src = null;
+  if(FM.stream) FM.stream.getTracks().forEach(t=>t.stop()); FM.stream = null;
+}
+async function fmAudioOpen(){
+  await getCtx(); if(!S33mods.fm.started) S33mods.fm.start(); fmAudioClose(); fmAStatus("Opening…");
+  if(!navigator.mediaDevices){ fmAStatus("No audio input in this browser"); return; }
+  let devs = await fmAudioList();
+  if(!devs.some(d=>d.label)){   // i nomi dei dispositivi arrivano solo dopo il permesso
+    try{ const s = await navigator.mediaDevices.getUserMedia({audio:true}); s.getTracks().forEach(t=>t.stop()); }
+    catch(e){ S.fm.audio = false; save(); fmShow(); fmAStatus("Audio input not allowed"); return; }
+    devs = await fmAudioList();
+  }
+  fmFillAudio(devs);
+  const dev = devs.find(d=>S.fm.ain && d.deviceId === S.fm.ain) || (S.fm.ainLabel && devs.find(d=>d.label === S.fm.ainLabel)) || devs.find(d=>FM_RX.test(d.label));
+  if(!dev){ S.fm.audio = true; save(); fmShow(); fmAStatus("FM-1 audio not found: plug it in or choose the input"); return; }
+  try{
+    FM.stream = await navigator.mediaDevices.getUserMedia({audio:{deviceId:{exact:dev.deviceId}, echoCancellation:false, noiseSuppression:false, autoGainControl:false, channelCount:{ideal:2}}});
+  }catch(e){ fmAStatus("Unable to open " + dev.label); return; }
+  FM.src = ctx.createMediaStreamSource(FM.stream); FM.src.connect(FM.trim);
+  S.fm.audio = true; S.fm.ain = dev.deviceId; S.fm.ainLabel = dev.label; save(); fmFillAudio(devs); fmShow();
+  fmAStatus("Listening · " + dev.label);
+  // se il Mac suona attraverso l'FM-1, il suono rientrerebbe dall'ingresso: avviso
+  try{ const outs = (await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind === "audiooutput"), def = outs.find(d=>d.deviceId === "default");
+    if(def && FM_RX.test(def.label)) fmAStatus("⚠ The Mac plays through the FM-1: pick another output to avoid feedback"); }catch(e){}
+}
+function fmLevel(){
+  const buf = new Float32Array(1024); let hold = 0;
+  (function loop(){ requestAnimationFrame(loop); if(!FM.an || !FM.ui.lv) return;
+    FM.an.getFloatTimeDomainData(buf); let pk = 0; for(let i = 0; i < buf.length; i++){ const v = Math.abs(buf[i]); if(v > pk) pk = v; }
+    hold = Math.max(pk, hold * 0.92); const db = 20 * Math.log10(Math.max(hold, 1e-5));
+    FM.ui.lv.style.width = Math.max(0, Math.min(100, (db + 48) / 48 * 100)) + "%"; })();
+}
+S33mods.fm.start = ()=>{
+  const m = S33mods.fm; if(m.started || !ctx) return; m.started = true;
+  FM.trim = ctx.createGain(); FM.trim.gain.value = S.fm.trim / 100; FM.trim.connect(m.out);
+  FM.an = ctx.createAnalyser(); FM.an.fftSize = 1024; FM.trim.connect(FM.an);
+  FM.clkOn = clockConnected("fm"); setInterval(fmClockTick, 25); fmLevel();
+  if(S.fm.audio) fmAudioOpen(); else { fmAStatus("Audio in off"); fmAudioList().then(fmFillAudio); }
+  if(navigator.mediaDevices) navigator.mediaDevices.addEventListener("devicechange", ()=>{ if(S.fm.audio && !FM.stream) fmAudioOpen(); else fmAudioList().then(fmFillAudio); });
+};
+
+function fmFillMidi(){
+  const u = FM.ui; if(!u.sel) return; fmAuto(); const c = S.fm;
+  u.sel.innerHTML = optHtml(devOpts(outNames, c.dst, "— none —")); u.sel.value = c.dst; u.ch.value = String(c.ch);
+  u.st.textContent = !ctx ? "Start audio to find the FM-1" : !c.dst ? (outNames.length ? "Choose the FM-1 port" : "No MIDI output")
+    : outNames.includes(c.dst) ? "MIDI connected" : "FM-1 not connected";
+}
+function fmShow(){
+  const u = FM.ui; if(!u.aud) return;
+  u.aud.classList.toggle("on", !!S.fm.audio); u.aud.textContent = S.fm.audio ? "Audio in ON" : "Audio in OFF";
+  u.pv.textContent = String(S.fm.prog + 1).padStart(3, "0"); u.clk.checked = !!S.fm.clk;
+  u.trim.value = S.fm.trim; u.trv.textContent = S.fm.trim + "%";
+  u.edb.classList.toggle("on", FM.edit); u.fme.hidden = !FM.edit;
+}
+function fmKnobs(){
+  const u = FM.ui; u.fmk.innerHTML = "";
+  S.fm.cc.forEach((k, i)=>{
+    miniKnob(u.fmk, {label:k.n || "—", title:k.cc == null ? "Not assigned: press Edit to give it a CC number" : k.n + " · CC " + k.cc + " · drag or mouse wheel",
+      min:0, max:127, zero:0, get:()=>k.v, set:v=>{ k.v = v; fmCC(i); }, fmt:v=>k.cc == null ? "off" : String(v)});
+    if(k.cc == null) u.fmk.lastChild.classList.add("off");
+  });
+  u.fme.innerHTML = `<div class="small">CC numbers: see M-VAVE's FM-1 MIDI CC guide</div>` + S.fm.cc.map((k, i)=>
+    `<div class="fmer"><input class="fn" data-i="${i}" maxlength="8" value="${esc(k.n)}" title="Name"><span class="lbl">CC</span><input class="fc" data-i="${i}" type="number" min="0" max="119" value="${k.cc == null ? "" : k.cc}" title="CC number (empty = off)"></div>`).join("");
+  u.fme.querySelectorAll("input").forEach(el=>el.onchange = ()=>{
+    const k = S.fm.cc[+el.dataset.i];
+    if(el.classList.contains("fn")) k.n = el.value.trim() || "—";
+    else { const n = parseInt(el.value, 10); k.cc = isNaN(n) ? null : Math.max(0, Math.min(119, n)); }
+    save(); fmKnobs();
+  });
+}
+function fmUI(bd){
+  bd.innerHTML = `<div class="mod fmm">
+    <div class="row"><span class="led"></span><span class="mst"></span><button class="mini" data-a="panic" title="All Notes Off to the FM-1">Panic</button></div>
+    <div class="mrow"><select class="dev" title="FM-1 MIDI port"></select><select class="ch" title="FM-1 MIDI channel">${optHtml(CH_OPTS.slice(1))}</select></div>
+    <div class="row"><button class="mini" data-a="audio" title="Bring the FM-1's sound into the board (USB audio)">Audio in OFF</button><span class="mst fas"></span></div>
+    <div class="mrow"><select class="ain" title="Audio input from the FM-1"></select></div>
+    <div class="fmlv" title="FM-1 input level"><i></i></div>
+    <div class="row"><span class="lbl">Trim</span><input type="range" class="trim" min="0" max="200" step="1" title="Input level from the FM-1"><b class="trv small"></b></div>
+    <label class="small fmcl" title="Send MIDI Clock, Start and Stop when the CLK jack is patched"><input type="checkbox" class="clk"> Send MIDI clock</label>
+    <div class="row"><span class="lbl">Prog</span><button class="mini" data-a="pm" title="Previous program">‹</button><b class="pv"></b><button class="mini" data-a="pp" title="Next program">›</button></div>
+    <div class="row"><span class="lbl">Controls</span><span class="sp"></span><button class="mini" data-a="edit" title="Names and CC numbers of the knobs">Edit</button><button class="mini" data-a="all" title="Send every knob value to the FM-1">Send</button></div>
+    <div class="fmk"></div><div class="fme" hidden></div></div>`;
+  const q = s=>bd.querySelector(s), u = FM.ui;
+  Object.assign(u, { led:q(".led"), st:q(".mst"), sel:q("select.dev"), ch:q("select.ch"), aud:q('[data-a="audio"]'), ast:q(".fas"), ain:q("select.ain"),
+    lv:q(".fmlv i"), trim:q(".trim"), trv:q(".trv"), clk:q(".clk"), pv:q(".pv"), edb:q('[data-a="edit"]'), fmk:q(".fmk"), fme:q(".fme") });
+  u.sel.onchange = ()=>{ fmPanic(); S.fm.dst = u.sel.value; save(); fmFillMidi(); };
+  u.ch.onchange = ()=>{ fmPanic(); S.fm.ch = +u.ch.value; save(); };
+  u.ain.onchange = ()=>{ const o = u.ain.selectedOptions[0]; S.fm.ain = u.ain.value; S.fm.ainLabel = u.ain.value ? o.textContent.replace(/ \(not connected\)$/, "") : ""; save(); if(S.fm.audio) fmAudioOpen(); };
+  u.trim.oninput = ()=>{ S.fm.trim = +u.trim.value; u.trv.textContent = S.fm.trim + "%"; if(FM.trim && ctx) FM.trim.gain.setTargetAtTime(S.fm.trim / 100, ctx.currentTime, 0.02); save(); };
+  u.trim.ondblclick = ()=>{ u.trim.value = 100; u.trim.oninput(); };
+  u.clk.onchange = ()=>{ S.fm.clk = u.clk.checked; save(); if(!S.fm.clk && CLK.running) fmRaw([0xFC]); };
+  bd.querySelectorAll("button[data-a]").forEach(b=>b.onclick = async ()=>{
+    const a = b.dataset.a;
+    if(a === "panic") fmPanic();
+    else if(a === "audio"){ if(S.fm.audio){ fmAudioClose(); S.fm.audio = false; save(); fmShow(); fmAStatus("Audio in off"); } else fmAudioOpen(); }
+    else if(a === "pm" || a === "pp"){ S.fm.prog = (S.fm.prog + (a === "pp" ? 1 : 127)) % 128; save(); fmShow(); fmProg(); }
+    else if(a === "edit"){ FM.edit = !FM.edit; fmShow(); }
+    else if(a === "all") S.fm.cc.forEach((k, i)=>fmCC(i));
+  });
+  fmKnobs(); fmShow(); fmFillMidi(); fmAStatus("Audio in off");
 }
 
 /* ===== Clock =====
@@ -545,7 +735,7 @@ function clockUI(bd){
 /* ===== Mixer =====
    Un canale per strumento: il fader regola l'uscita dello strumento, ovunque sia collegata.
    Solo: restano udibili gli strumenti in solo e quelli sulla loro catena (prima e dopo, via cavi audio). */
-const MIXCH = [["tc","Twin Core","TWIN"],["no","Nostos One","NOST"],["jsb","JSB","JSB"],["dm","Drums","DRUM"],["gr","Granular","GRAN"],["sb","Stompbox","STOMP"]];
+const MIXCH = [["tc","Twin Core","TWIN"],["no","Nostos One","NOST"],["jsb","JSB","JSB"],["dm","Drums","DRUM"],["gr","Granular","GRAN"],["fm","FM-1","FM-1"],["sb","Stompbox","STOMP"]];
 const MXDEF = {v:80, m:false, s:false, pan:0, send:0};
 if(!S.mix) S.mix = {};
 MIXCH.forEach(([id])=>{ S.mix[id] = Object.assign({}, MXDEF, S.mix[id] || {}); });
@@ -1034,7 +1224,7 @@ function jackDown(ev, id, q){
 const PV = { on:false, arm:null, el:{} };
 const pvEl = document.getElementById("pv"), pvc = document.getElementById("pvc"), pvs = document.getElementById("pvs"), pvt = document.getElementById("pvt");
 const PV_SUB = { midi:"MIDI input", midi2:"MIDI input", clock:"Tempo · transport", mixer:"Fader · pan · send", tc:"Mono synth", no:"Poly synth",
-  jsb:"4-playhead sequencer", dm:"Drum machine", gr:"Granular sampler", sb:"Effects", outm:"Speakers · REC", mout:"To the Mac" };
+  jsb:"4-playhead sequencer", dm:"Drum machine", gr:"Granular sampler", sb:"Effects", outm:"Speakers · REC", mout:"To the Mac", fm:"Hardware FM synth" };
 const PV_W = 204, PV_HEAD = 34, PV_ROW = 28;
 const pvRows = id=>{ const ps = DEFS[id].ports; return Math.max(1, ps.filter(q=>q.dir === "in").length, ps.filter(q=>q.dir === "out").length); };
 const pvH = id=>PV_HEAD + 4 + pvRows(id) * PV_ROW + 12;
@@ -1043,7 +1233,7 @@ function pvPortXY(e){ const b = S.patchPos[e.m], q = portOf(e), ps = DEFS[e.m].p
 /* disposizione di partenza: il segnale scorre da sinistra a destra */
 function patchArrangement(){
   const W = Math.max(1000, pvEl.clientWidth || innerWidth), H = Math.max(500, (pvEl.clientHeight || innerHeight - 50));
-  const cols = [["midi","midi2","clock"], ["jsb","dm"], ["tc","no"], ["gr","sb","mixer"], ["outm","mout"]];
+  const cols = [["midi","midi2","clock"], ["jsb","dm"], ["tc","no","fm"], ["gr","sb","mixer"], ["outm","mout"]];
   const gap = Math.max(70, Math.floor((W - 40 - cols.length * PV_W) / (cols.length - 1))), pos = {};
   cols.forEach((col, ci)=>{ const hs = col.map(pvH), tot = hs.reduce((a,b)=>a+b, 0) + (col.length - 1) * 40;
     let y = Math.max(30, Math.round((H - tot) / 2)); col.forEach((id, k)=>{ pos[id] = {x:20 + ci * (PV_W + gap), y}; y += hs[k] + 40; }); });
