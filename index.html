@@ -164,6 +164,12 @@ button.mini{padding:3px 9px;font-size:11px}
 .fvst{white-space:normal}
 .pn.big .fvsx{flex:0 0 auto}
 .fvw{flex-wrap:wrap}
+.fvsl{flex-wrap:wrap;gap:6px}
+.fvslots{display:flex;gap:3px}
+.fvslots .mini{min-width:26px;padding:3px 0;opacity:.55}
+.fvslots .mini.has{opacity:1}
+.fvslots .mini.on{opacity:1}
+.fvlinkl{display:flex;align-items:center;gap:4px;white-space:nowrap}
 .fvw .mini{flex:1}
 .fvname{flex:2 1 90px;min-width:0;background:#0b0b0a;color:var(--ink);border:1px solid #34312c;border-radius:4px;padding:4px 6px;font:600 12px/1.2 ui-monospace,Menlo,monospace}
 .fvan{font:700 13px/1 ui-monospace,Menlo,monospace;min-width:20px;text-align:center}
@@ -767,13 +773,23 @@ function fvParse(buf){
   if(!out.length && b.length === 4096) for(let k = 0; k < 32; k++) out.push(fvUnpack(b, k * 128));
   return out;
 }
-function fvBank32(){ const B = S.fm.bank.slice(0, 32); while(B.length < 32) B.push(fvInitVoice()); return B; }
+/* quattro banchi, uno per ogni banco dell'FM-1 (A–D, 32 voci ciascuno: Program Change 0–31, 32–63, 64–95, 96–127).
+   "fm" = quel banco è salvato anche sull'FM-1: scegliere una voce manda un Program Change, così l'FM-1 mostra anche il nome. */
+const FV_SLOTS = "ABCD";
+const fvB = ()=>S.fm.banks[S.fm.bslot];
+function fvBank32(){ const B = fvB().v.slice(0, 32); while(B.length < 32) B.push(fvInitVoice()); return B; }
 function fvBankBytes(){ const d = [].concat(...fvBank32().map(fvPack)); return [0xF0, 0x43, 0x00, 0x09, 0x20, 0x00].concat(d, [fvSum(d), 0xF7]); }
 function fvVoiceBytes(){ const d = S.fm.voice.slice(0, 155); return [0xF0, 0x43, 0x00, 0x00, 0x01, 0x1B].concat(d, [fvSum(d), 0xF7]); }
 const fvFile = n=>(n || "voice").replace(/[\\/:*?"<>|]+/g, "-").trim() || "voice";
 
 if(!Array.isArray(S.fm.voice) || S.fm.voice.length !== 155) S.fm.voice = fvInitVoice(); else S.fm.voice = fvClamp(S.fm.voice);
-if(!Array.isArray(S.fm.bank)) S.fm.bank = []; else S.fm.bank = S.fm.bank.filter(v=>Array.isArray(v) && v.length === 155).map(fvClamp);
+const fvVs = a=>Array.isArray(a) ? a.filter(v=>Array.isArray(v) && v.length === 155).map(fvClamp).slice(0, 32) : [];
+if(!Array.isArray(S.fm.banks) || S.fm.banks.length !== 4) S.fm.banks = [0,1,2,3].map(()=>({name:"", v:[], fm:true}));
+S.fm.banks = S.fm.banks.map(b=>({name:(b && b.name) || "", v:fvVs(b && b.v), fm:!(b && b.fm === false)}));
+// dalla 1.6.0: il banco unico diventa il banco A (da confermare come salvato sull'FM-1)
+if(Array.isArray(S.fm.bank) && S.fm.bank.length && !S.fm.banks[0].v.length) S.fm.banks[0] = {name:S.fm.bankName || "", v:fvVs(S.fm.bank), fm:false};
+delete S.fm.bank; delete S.fm.bankName;
+S.fm.bslot = Math.max(0, Math.min(3, S.fm.bslot | 0));
 if(!Array.isArray(S.fm.mute) || S.fm.mute.length !== 6) S.fm.mute = [0,0,0,0,0,0];
 S.fm.slot = Math.max(0, S.fm.slot | 0); if(!S.fm.tab) S.fm.tab = "setup";
 FM.kshow = [];
@@ -883,22 +899,41 @@ function fvPaint(){
   });
 }
 function fvBankFill(){
-  const s = FM.ui.fvbank; if(!s) return; const B = S.fm.bank;
-  s.innerHTML = B.length ? optHtml(B.map((v, i)=>[i, String(i + 1).padStart(2, "0") + "  " + fvName(v)])) : optHtml([["", "No bank yet: Load .syx…"]]);
+  const u = FM.ui, s = u.fvbank; if(!s) return; const b = fvB(), B = b.v, L = FV_SLOTS[S.fm.bslot];
+  s.innerHTML = B.length ? optHtml(B.map((v, i)=>[i, L + String(i + 1).padStart(2, "0") + "  " + fvName(v)])) : optHtml([["", "Bank " + L + " empty: Load .syx…"]]);
   s.disabled = !B.length; if(B.length){ S.fm.slot = Math.min(S.fm.slot, B.length - 1); s.value = String(S.fm.slot); }
+  u.fvslots.querySelectorAll("button").forEach((x, i)=>{ const bb = S.fm.banks[i];
+    x.classList.toggle("on", i === S.fm.bslot); x.classList.toggle("has", !!bb.v.length);
+    x.title = "Bank " + FV_SLOTS[i] + (bb.v.length ? " · " + (bb.name || bb.v.length + " voices") + (bb.fm ? " · on the FM-1" : "") : " · empty"); });
+  u.fvlink.checked = b.fm; u.fvlinkl.title = "Bank " + L + " is also saved in bank " + L + " of the FM-1: choosing a voice sends Program Change " + (S.fm.bslot * 32 + 1) + "–" + (S.fm.bslot * 32 + 32) + ", so the FM-1 shows its name too";
 }
 function fvRefresh(){ FM.kshow.forEach(f=>f()); fvBankFill(); fvPaint(); }
 function fvUse(v){ S.fm.voice = fvClamp(v); S.fm.mute = [0,0,0,0,0,0]; save(); fvRefresh(); fvSendAll(); }
+/* una voce scelta dal banco: se il banco è anche sull'FM-1 basta un Program Change (e il display mostra il nome), altrimenti si manda tutta la voce */
+function fvPick(){
+  const b = fvB(), v = b.v[S.fm.slot]; if(!v) return;
+  if(!b.fm){ fvUse(v.slice()); return; }
+  S.fm.prog = S.fm.bslot * 32 + S.fm.slot; S.fm.voice = v.slice(); S.fm.mute = [0,0,0,0,0,0]; save(); fvRefresh(); fmShow();
+  if(fmPort()){ fmProg(); fvSt("Program " + FV_SLOTS[S.fm.bslot] + String(S.fm.slot + 1).padStart(2, "0") + " on the FM-1 · " + fvName(v)); }
+  else fvSt("FM-1 not connected");
+}
+/* Prog nella scheda Setup: se quel banco è nella board ed è sull'FM-1, l'editor carica la stessa voce */
+function fvFromProg(){
+  const bs = S.fm.prog >> 5, i = S.fm.prog & 31, b = S.fm.banks[bs];
+  if(!b || !b.fm || !b.v[i]) return;
+  S.fm.bslot = bs; S.fm.slot = i; S.fm.voice = b.v[i].slice(); S.fm.mute = [0,0,0,0,0,0]; save(); fvRefresh();
+}
 function fvAct(a){
   const v = S.fm.voice, u = FM.ui;
   if(a === "sx") fmSxEnable();
   else if(a === "send") fvSendAll();
   else if(a === "load") u.fvfile.click();
   else if(a === "init") fvUse(fvInitVoice());
-  else if(a === "store"){ if(!S.fm.bank.length) S.fm.bank = fvBank32(); S.fm.bank[S.fm.slot] = v.slice(); save(); fvBankFill(); fvSt("Stored in slot " + (S.fm.slot + 1)); }
+  else if(a === "store"){ const b = fvB(); if(!b.v.length) b.v = fvBank32(); b.v[S.fm.slot] = v.slice(); save(); fvBankFill();
+    fvSt("Stored in " + FV_SLOTS[S.fm.bslot] + String(S.fm.slot + 1).padStart(2, "0") + (b.fm ? " here: send the bank to update the FM-1" : "")); }
   else if(a === "xv") download(new Blob([new Uint8Array(fvVoiceBytes())], {type:"application/octet-stream"}), fvFile(fvName(v)) + ".syx");
-  else if(a === "xb") download(new Blob([new Uint8Array(fvBankBytes())], {type:"application/octet-stream"}), fvFile(S.fm.bankName ? S.fm.bankName.replace(/\.syx$/i, "") : "S33 FM-1 bank") + ".syx");
-  else if(a === "sb"){ if(fvSx(fvBankBytes())){ flash(u.led); fvSt("Bank sent: choose on the FM-1 where to save it"); } else fvShowSx(); }
+  else if(a === "xb") download(new Blob([new Uint8Array(fvBankBytes())], {type:"application/octet-stream"}), fvFile(fvB().name ? fvB().name.replace(/\.syx$/i, "") : "S33 FM-1 bank " + FV_SLOTS[S.fm.bslot]) + ".syx");
+  else if(a === "sb"){ if(fvSx(fvBankBytes())){ flash(u.led); fvSt("Bank sent: on the FM-1 save it in bank " + FV_SLOTS[S.fm.bslot]); } else fvShowSx(); }
   else if(a === "am" || a === "ap") fvSet(134, (v[134] + (a === "ap" ? 1 : 31)) % 32);
   else if(a === "wave") fvSet(142, (v[142] + 1) % 6);
   else if(a === "lks") fvSet(141, 1 - v[141]);
@@ -909,7 +944,9 @@ function fvUI(pg){
     <div class="fvb fvvoice">
       <div class="row fvw"><button class="mini fvsx" data-v="sx" title="Chrome asks once: SysEx is needed to write the voice into the FM-1">Enable SysEx</button><span class="mst fvst"></span></div>
       <div class="row fvw"><input class="fvname" maxlength="10" spellcheck="false" title="Voice name (10 characters)"><button class="mini" data-v="send" title="Write the whole voice into the FM-1 (155 parameters, about half a second)">Send voice</button></div>
-      <div class="mrow"><select class="fvbank" title="Voices of the loaded bank: choosing one sends it to the FM-1"></select></div>
+      <div class="row fvsl"><span class="lbl">Bank</span><span class="fvslots">${[...FV_SLOTS].map((L, i)=>`<button class="mini" data-b="${i}">${L}</button>`).join("")}</span>
+        <label class="small fvlinkl"><input type="checkbox" class="fvlink"> on the FM-1</label></div>
+      <div class="mrow"><select class="fvbank" title="Voices of this bank: choosing one sends it to the FM-1"></select></div>
       <div class="row fvw"><button class="mini" data-v="load" title="Open a DX7 .syx file: 32-voice bank or single voice">Load .syx…</button><button class="mini fvbigi" data-v="init" title="Start from an initialised voice (one sine wave)">Init</button><button class="mini fvbigi" data-v="store" title="Put this voice into the selected bank slot">Store</button></div>
       <div class="row fvw fvbig"><button class="mini" data-v="xv" title="Save this voice as a DX7 single-voice .syx">Save voice</button><button class="mini" data-v="xb" title="Save the 32-voice bank as a DX7 .syx">Save bank</button><button class="mini" data-v="sb" title="Send the 32-voice bank to the FM-1, then choose on the FM-1 where to save it">Bank → FM-1</button></div>
       <input type="file" class="fvfile" accept=".syx,.SYX" hidden></div>
@@ -925,7 +962,7 @@ function fvUI(pg){
   <div class="small fvhint">Double-click the FM-1 title bar for the full editor: operators, LFO and pitch envelope.</div>
   <div class="fvops fvbig"></div>`;
   const q = s=>pg.querySelector(s), u = FM.ui;
-  Object.assign(u, { fvsx:q(".fvsx"), fvst:q(".fvst"), fvname:q(".fvname"), fvbank:q(".fvbank"), fvfile:q(".fvfile"), fvan:q(".fvan"), fvdia:q(".fvdia"),
+  Object.assign(u, { fvsx:q(".fvsx"), fvst:q(".fvst"), fvname:q(".fvname"), fvbank:q(".fvbank"), fvslots:q(".fvslots"), fvlink:q(".fvlink"), fvlinkl:q(".fvlinkl"), fvfile:q(".fvfile"), fvan:q(".fvan"), fvdia:q(".fvdia"),
     fvwave:q(".fvwave"), fvlks:q(".fvlks"), fvoks:q(".fvoks"), fvpeg:q(".fvpeg"), fvops:q(".fvops") });
   FM.kshow = [];
   fvKnob(q(".fvak"), 135, "Feedback"); fvKnob(q(".fvak"), 144, "Transpose", v=>(v > 24 ? "+" : "") + (v - 24));
@@ -937,13 +974,16 @@ function fvUI(pg){
   u.fvname.onchange = ()=>{ const s = (u.fvname.value.replace(/[^\x20-\x7e]/g, "") + "          ").slice(0, 10);
     for(let i = 0; i < 10; i++) fvSet(145 + i, s.charCodeAt(i)); u.fvname.blur(); fvBankFill(); };
   u.fvname.onkeydown = e=>{ if(e.key === "Enter") u.fvname.blur(); e.stopPropagation(); };
-  u.fvbank.onchange = ()=>{ S.fm.slot = +u.fvbank.value; fvUse(S.fm.bank[S.fm.slot].slice()); };
+  u.fvbank.onchange = ()=>{ S.fm.slot = +u.fvbank.value; fvPick(); };
+  u.fvslots.querySelectorAll("button").forEach(x=>x.onclick = ()=>{ S.fm.bslot = +x.dataset.b; save(); fvBankFill(); });
+  u.fvlink.onchange = ()=>{ fvB().fm = u.fvlink.checked; save(); fvBankFill(); };
   u.fvfile.onchange = async ()=>{
     const f = u.fvfile.files[0]; u.fvfile.value = ""; if(!f) return;
     let vs = []; try{ vs = fvParse(await f.arrayBuffer()); }catch(e){}
     if(!vs.length){ fvSt("No DX7 voices in " + f.name); return; }
-    S.fm.bank = vs.slice(0, 128); S.fm.bankName = f.name; S.fm.slot = 0; fvUse(S.fm.bank[0].slice());
-    fvSt(vs.length + (vs.length === 1 ? " voice" : " voices") + " from " + f.name + (FM.sx ? "" : " · enable SysEx to hear them"));
+    const b = fvB(); b.v = vs.slice(0, 32); b.name = f.name; S.fm.slot = 0; save(); fvBankFill(); fvPick();
+    fvSt(b.v.length + (b.v.length === 1 ? " voice" : " voices") + " from " + f.name + " in bank " + FV_SLOTS[S.fm.bslot] +
+      (b.fm ? " · untick “on the FM-1” if that bank of the FM-1 holds something else" : FM.sx ? "" : " · enable SysEx to hear them"));
   };
   fvRefresh(); fvShowSx();
 }
@@ -981,7 +1021,7 @@ function fmUI(bd){
     const a = b.dataset.a;
     if(a === "panic") fmPanic();
     else if(a === "audio"){ if(S.fm.audio){ fmAudioClose(); S.fm.audio = false; save(); fmShow(); fmAStatus("Audio in off"); } else fmAudioOpen(); }
-    else if(a === "pm" || a === "pp"){ S.fm.prog = (S.fm.prog + (a === "pp" ? 1 : 127)) % 128; save(); fmShow(); fmProg(); }
+    else if(a === "pm" || a === "pp"){ S.fm.prog = (S.fm.prog + (a === "pp" ? 1 : 127)) % 128; save(); fmShow(); fmProg(); fvFromProg(); }
     else if(a === "all") fmFxAll();
   });
   fmFxUI(); fmShow(); fmFillMidi(); fmAStatus("Audio in off");
