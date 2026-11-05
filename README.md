@@ -19,7 +19,7 @@ Made for **Chrome on the Mac** with a MIDI keyboard. It is a **PWA** in a single
 The service worker needs `http://localhost` or `https://`:
 
 ```bash
-cd "v19 (1.5.0)"
+cd "v20 (1.6.0)"
 python3 -m http.server 8000
 # open http://localhost:8000 in Chrome → ⋮ menu → Install S33 - Board
 ```
@@ -48,7 +48,7 @@ Browser storage is per address: a board opened as a file, from `localhost` or fr
 | Drum Machine | CLK in · OUT, MIDI out | 4-voice drum machine; hits go out as MIDI (channel 10, GM notes) |
 | Granular | IN, MIDI, CLK in · OUT | 4-track granular sampler; records from its IN jack (or the mic) on the bar; LPD8 pads and knobs |
 | Stompbox | IN, CLK in · OUT | Chorus, flanger, delay (follows the Clock), reverb |
-| FM-1 | MIDI, CLK in · OUT | The M-VAVE FM-1 over USB-C: notes, program change and its six effects (CC on the FX channel) to the synth, MIDI Clock, its USB audio back into the board |
+| FM-1 | MIDI, CLK in · OUT | The M-VAVE FM-1 over USB-C: notes, program change, a full DX7-style voice editor (SysEx: 6 operators, 32 algorithms, LFO, pitch EG, .syx banks) and its six effects (CC on the FX channel) to the synth, MIDI Clock, its USB audio back into the board |
 | Output | IN | Volume, limiter, meters, **REC** to WAV (master or stems) |
 | MIDI Out | MIDI in | Sends to a Mac MIDI port (IAC bus, Logic…) |
 

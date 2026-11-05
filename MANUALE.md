@@ -183,6 +183,20 @@ Il modulo **FM-1** porta nella board l'M-VAVE FM-1 collegato al Mac con il cavo 
 - **Effects**: i sei effetti dell'FM-1 (Filter, Reverb, Delay, Distortion, Chorus, Phaser), ognuno con il suo interruttore e tre parametri, presi dalla guida MIDI di M-VAVE. Filter e Reverb hanno il tipo su un pulsante che si cambia a ogni clic (LPF/BPF/HPF, Room/Hall/Plate). Cutoff va da 0 a 107, Q da 0 a 10, tutto il resto da 0 a 100. Doppio clic su una manopola: valore di partenza.
 - **Canale degli effetti**: l'FM-1 riceve gli effetti su un canale a parte (*effectch*, di default il 2), da impostare nel menu accanto a *Effects*. Deve essere diverso dal canale delle note: sullo stesso canale la rotella di modulazione (CC 1) cambierebbe il tipo di filtro, e il modulo lo segnala.
 - **Send**: rimanda all'FM-1 tutte le impostazioni degli effetti. Utile dopo aver aperto una sessione o acceso il synth, perché la board non legge lo stato dell'FM-1 e all'inizio le manopole possono non corrispondere a quello che senti. Porta, canali, ingresso audio ed effetti sono salvati nella sessione.
+- **Schede**: il modulo ha tre schede. *Setup* (porta, canale, audio, clock, Prog), *Voice* (l'editor della voce) e *FX* (gli effetti).
+
+### FM-1 · editor della voce (scheda Voice)
+
+L'FM-1 è un DX7 in piccolo: ogni voce ha 6 operatori, 32 algoritmi, LFO e inviluppo di pitch. La scheda *Voice* li rende tutti modificabili. Nel pannello piccolo trovi solo nome, banco e invio; **doppio clic sulla barra del titolo** per l'editor completo.
+
+- **Enable SysEx**: l'editor scrive nell'FM-1 un parametro alla volta con messaggi SysEx (`F0 43 10 pp qq vv F7`). Chrome chiede il permesso la prima volta, poi la board lo richiede da sola a ogni avvio. Senza SysEx le modifiche restano nella board e partono quando lo attivi (premendo *Send voice*).
+- **Da dove si parte**: la board non può leggere la voce che l'FM-1 sta suonando. Si parte da **Init** (un'onda sinusoidale sull'OP1) o da un banco **.syx** DX7 (*Load .syx…*: banchi da 32 voci o voci singole). Scegliere una voce del banco la manda subito all'FM-1 (155 parametri, mezzo secondo). *Prog* nella scheda Setup invece richiama le voci interne dell'FM-1, che l'editor non conosce.
+- **Algorithm ‹ ›**: lo schema mostra come sono collegati gli operatori: in giallo i portanti (quelli che si sentono), in blu i modulatori, tratteggiato il feedback. *Feedback*, *Transpose* e *Osc sync* stanno sotto lo schema.
+- **Operatori (OP1–OP6)**: per ognuno, *Freq* (RATIO segue la tastiera, FIXED dà la stessa frequenza su tutti i tasti; Coarse, Fine, Detune), *Level* (per i modulatori è la quantità di modulazione, quindi la brillantezza del suono), l'*inviluppo* con 4 rate e 4 livelli e il disegno accanto, la *sensibilità* (Velocity, Amp mod dall'LFO, Rate scaling) e la *key scaling* (punto di rottura, profondità e curve a sinistra e a destra). *Mute* ammutolisce un operatore senza perdere il suo livello.
+- **LFO** e **Pitch envelope**: forma d'onda, velocità, ritardo, profondità di modulazione di pitch e di ampiezza; l'inviluppo di pitch ha il centro a 50.
+- **Banco**: *Store* mette la voce modificata nella posizione scelta del banco; *Save voice* e *Save bank* salvano file .syx DX7 (si aprono anche in Dexed); *Bank → FM-1* manda all'FM-1 l'intero banco da 32 voci, che poi sull'FM-1 scegli dove salvare (A/B/C/D).
+- Voce, banco e muti finiscono nella sessione della board.
+
 - **Latenza**: il suono dell'FM-1 torna nella board con un piccolo ritardo (l'ingresso USB): rispetto agli strumenti interni può arrivare qualche millisecondo dopo.
 
 ## 9. Sessioni
