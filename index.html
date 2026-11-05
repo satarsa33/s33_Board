@@ -155,13 +155,13 @@ button.mini{padding:3px 9px;font-size:11px}
 .fpg[hidden]{display:none}
 .pn.big .fpg[data-pg="setup"],.pn.big .fpg[data-pg="fx"] > .row,.pn.big .fmtabs{width:100%;max-width:560px}
 .fvtop{display:flex;flex-direction:column;gap:7px}
-.pn.big .fvtop{display:grid;grid-template-columns:290px 270px minmax(250px,1fr) minmax(330px,1.3fr);gap:8px;align-items:stretch}
+.pn.big .fvtop{display:grid;grid-template-columns:300px 280px 1fr 1.3fr;gap:8px;align-items:stretch}
 .fvb{background:#171614;border-radius:7px;padding:7px;box-shadow:inset 0 0 0 1px #2a2824;display:flex;flex-direction:column;gap:6px;min-width:0}
 .pn:not(.big) .fvbig{display:none}
 .pn.big .fvhint{display:none}
 .pn:not(.big) .fvbigi{display:none}
 .pn:not(.big) .fvw > *{flex:1 1 100%}
-.fvst{white-space:normal}
+.fmm .fvst{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.3}
 .pn.big .fvsx{flex:0 0 auto}
 .fvw{flex-wrap:wrap}
 .fvsl{flex-wrap:wrap;gap:6px}
@@ -171,6 +171,7 @@ button.mini{padding:3px 9px;font-size:11px}
 .fvslots .mini.on{opacity:1}
 .fvlinkl{display:flex;align-items:center;gap:4px;white-space:nowrap}
 .fvw .mini{flex:1}
+.pn.big .fvw .mini{flex:1 0 auto;white-space:nowrap;overflow:visible}
 .fvname{flex:2 1 90px;min-width:0;background:#0b0b0a;color:var(--ink);border:1px solid #34312c;border-radius:4px;padding:4px 6px;font:600 12px/1.2 ui-monospace,Menlo,monospace}
 .fvan{font:700 13px/1 ui-monospace,Menlo,monospace;min-width:20px;text-align:center}
 .fvdia{display:block;width:100%;height:118px}
@@ -192,7 +193,17 @@ button.mini{padding:3px 9px;font-size:11px}
 .fveg .mid{stroke:#3d3a34}
 .fvk.k-eg{flex-wrap:nowrap}
 .fvops{display:flex;flex-direction:column;gap:5px}
-.fvop{display:grid;grid-template-columns:76px auto auto auto auto auto;justify-content:start;gap:16px;align-items:center;background:#171614;border-radius:7px;padding:6px 10px;box-shadow:inset 0 0 0 1px #2a2824}
+.fvop,.fvhdr{display:grid;grid-template-columns:70px 236px 52px 580px 156px 222px;gap:12px;align-items:center;padding:5px 10px}
+.fvop{background:#171614;border-radius:7px;box-shadow:inset 0 0 0 1px #2a2824}
+.fvhdr{padding:2px 10px 0;font-size:9.5px;font-weight:700;letter-spacing:.12em;color:var(--mut);text-transform:uppercase;white-space:nowrap}
+.fvg.fvfq{flex-direction:row;align-items:center;gap:8px}
+.fvfm{display:flex;flex-direction:column;gap:5px;width:70px;flex:none}
+.fvfm .mini{padding:3px 0}
+.fvg.fvks{flex-direction:row;align-items:center;gap:6px}
+.fvcv{display:flex;flex-direction:column;gap:4px;width:62px;flex:none}
+.fvcv .mini{padding:3px 2px;font-size:10px}
+.fvk.k-fr,.fvk.k-se,.fvk.k-ks,.fvk.k-ol{flex-wrap:nowrap}
+.fvpk{width:212px}
 .fvop .fvid{display:flex;flex-direction:column;gap:3px;align-items:flex-start}
 .fvop .fvid b{font:800 14px/1 ui-monospace,Menlo,monospace;color:#6aa2ff}
 .fvop.car .fvid b{color:var(--c)}
@@ -822,7 +833,19 @@ function fvSendAll(){
   const t0 = performance.now(); for(let p = 0; p < 155; p++) fvWrite(p, t0 + p * 4);
   flash(FM.ui.led); fvSt("Voice sent · " + fvName(S.fm.voice));
 }
-function fvSt(t){ if(FM.ui.fvst) FM.ui.fvst.textContent = t; }
+function fvSt(t){ if(FM.ui.fvst){ FM.ui.fvst.textContent = t; FM.ui.fvst.title = t; } }
+/* a tutta pagina la scheda Voice si ingrandisce in proporzione: è disegnata per 1400 px di larghezza
+   e cresce fino a riempire il pannello in larghezza o in altezza (al massimo 1,8 volte) */
+const FV_W = 1400;
+function fvFit(){
+  const pg = FM.ui.fvpg; if(!pg) return; const box = pg.closest(".fmm"), big = !!pg.closest(".pn.big");
+  if(!big || pg.hidden){ pg.style.zoom = ""; pg.style.width = ""; return; }
+  pg.style.zoom = 1; pg.style.width = FV_W + "px";
+  const cs = getComputedStyle(box), aw = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 4;
+  const tabs = box.querySelector(".fmtabs"), ah = box.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - (tabs ? tabs.offsetHeight + 7 : 0) - 4;
+  const s = Math.max(0.75, Math.min(1.8, aw / FV_W, ah / pg.scrollHeight));
+  pg.style.zoom = s.toFixed(3);
+}
 function fvShowSx(){
   const u = FM.ui; if(!u.fvsx) return;
   u.fvsx.classList.toggle("on", !!FM.sx); u.fvsx.textContent = FM.sx ? "SysEx on" : "Enable SysEx";
@@ -870,15 +893,16 @@ function fvKnob(host, p, label, fmt){
     get:()=>S.fm.voice[p], set:v=>fvSet(p, v), fmt:fmt || (v=>String(v))}));
 }
 function fvOps(){
-  const box = FM.ui.fvops; box.innerHTML = "";
+  const box = FM.ui.fvops;
+  box.innerHTML = `<div class="fvhdr"><span></span><span>Frequency</span><span>Out</span><span>Envelope · rates R1–R4 · levels L1–L4</span><span>Sensitivity</span><span>Key scaling</span></div>`;
   for(let op = 1; op <= 6; op++){
     const P = f=>fvP(op, f), r = document.createElement("div"); r.className = "fvop"; r.dataset.op = op;
     r.innerHTML = `<div class="fvid"><b>OP${op}</b><small></small><button class="mini fvmute" title="Mute this operator (sends level 0 and keeps your level)">Mute</button></div>
-      <div class="fvg"><div class="row"><span class="lbl">Freq</span><button class="mini fvmode" title="Ratio: follows the keyboard · Fixed: same frequency on every key"></button><b class="fvfr"></b></div><div class="fvk k-fr"></div></div>
-      <div class="fvg"><span class="lbl">Out</span><div class="fvk k-ol"></div></div>
-      <div class="fvg"><span class="lbl">Envelope · rates and levels</span><div class="fvegg"><svg class="fveg"></svg><div class="fvk k-eg"></div></div></div>
-      <div class="fvg"><span class="lbl">Sensitivity</span><div class="fvk k-se"></div></div>
-      <div class="fvg"><div class="row"><span class="lbl">Key scaling</span><button class="mini fvlc" title="Left curve (below the break point)"></button><button class="mini fvrc" title="Right curve (above the break point)"></button></div><div class="fvk k-ks"></div></div>`;
+      <div class="fvg fvfq"><div class="fvfm"><button class="mini fvmode" title="Ratio: follows the keyboard · Fixed: same frequency on every key"></button><b class="fvfr"></b></div><div class="fvk k-fr"></div></div>
+      <div class="fvk k-ol"></div>
+      <div class="fvegg"><svg class="fveg"></svg><div class="fvk k-eg"></div></div>
+      <div class="fvk k-se"></div>
+      <div class="fvg fvks"><div class="fvk k-ks"></div><div class="fvcv"><button class="mini fvlc" title="Left curve (below the break point)"></button><button class="mini fvrc" title="Right curve (above the break point)"></button></div></div>`;
     const q = s=>r.querySelector(s);
     fvKnob(q(".k-fr"), P("FC"), "Coarse"); fvKnob(q(".k-fr"), P("FF"), "Fine"); fvKnob(q(".k-fr"), P("DET"), "Detune", v=>(v > 7 ? "+" : "") + (v - 7));
     fvKnob(q(".k-ol"), P("OL"), "Level");
@@ -967,7 +991,7 @@ function fvUI(pg){
     <div class="fvb fvbig">
       <div class="row"><span class="lbl">LFO</span><span class="sp"></span><button class="mini fvwave" data-v="wave" title="LFO wave"></button><button class="mini fvlks" data-v="lks" title="LFO key sync: the LFO restarts on every note">Key sync</button></div>
       <div class="fvk fvlfo"></div><div class="small">Pitch mod: depth × the voice's sensitivity · Amp mod: depth × each operator's Amp mod</div></div>
-    <div class="fvb fvbig"><div class="row"><span class="lbl">Pitch envelope</span></div><div class="fvegg"><svg class="fveg fvpeg"></svg></div><div class="fvk fvpk"></div></div>
+    <div class="fvb fvbig"><div class="row"><span class="lbl">Pitch envelope</span></div><div class="fvegg"><svg class="fveg fvpeg"></svg><div class="fvk fvpk"></div></div></div>
   </div>
   <div class="small fvhint">Double-click the FM-1 title bar for the full editor: operators, LFO and pitch envelope.</div>
   <div class="fvops fvbig"></div>`;
@@ -996,6 +1020,8 @@ function fvUI(pg){
       (b.fm ? " · untick “on the FM-1” if that bank of the FM-1 holds something else" : FM.sx ? "" : " · enable SysEx to hear them"));
   };
   fvRefresh(); fvShowSx();
+  u.fvpg = pg; let fq = 0;
+  if(window.ResizeObserver) new ResizeObserver(()=>{ cancelAnimationFrame(fq); fq = requestAnimationFrame(fvFit); }).observe(pg.closest(".fmm"));
 }
 
 function fmUI(bd){
@@ -1038,7 +1064,7 @@ function fmUI(bd){
   fvUI(q('.fpg[data-pg="voice"]'));
   const tabs = bd.querySelector(".fmtabs");
   const setTab = tb=>{ S.fm.tab = tb; save(); tabs.querySelectorAll("button").forEach(b=>b.classList.toggle("on", b.dataset.t === tb));
-    bd.querySelectorAll(".fpg").forEach(pg=>pg.hidden = pg.dataset.pg !== tb); };
+    bd.querySelectorAll(".fpg").forEach(pg=>pg.hidden = pg.dataset.pg !== tb); fvFit(); };
   tabs.querySelectorAll("button").forEach(b=>b.onclick = ()=>setTab(b.dataset.t)); setTab(S.fm.tab);
 }
 
