@@ -786,8 +786,10 @@ if(!Array.isArray(S.fm.voice) || S.fm.voice.length !== 155) S.fm.voice = fvInitV
 const fvVs = a=>Array.isArray(a) ? a.filter(v=>Array.isArray(v) && v.length === 155).map(fvClamp).slice(0, 32) : [];
 if(!Array.isArray(S.fm.banks) || S.fm.banks.length !== 4) S.fm.banks = [0,1,2,3].map(()=>({name:"", v:[], fm:true}));
 S.fm.banks = S.fm.banks.map(b=>({name:(b && b.name) || "", v:fvVs(b && b.v), fm:!(b && b.fm === false)}));
-// dalla 1.6.0: il banco unico diventa il banco A (da confermare come salvato sull'FM-1)
-if(Array.isArray(S.fm.bank) && S.fm.bank.length && !S.fm.banks[0].v.length) S.fm.banks[0] = {name:S.fm.bankName || "", v:fvVs(S.fm.bank), fm:false};
+// dalla 1.6.0: il banco unico diventa il banco A
+if(Array.isArray(S.fm.bank) && S.fm.bank.length && !S.fm.banks[0].v.length) S.fm.banks[0] = {name:S.fm.bankName || "", v:fvVs(S.fm.bank), fm:true};
+// la 1.7.0 lasciava quel banco senza spunta anche dopo averci ricaricato un file: si riaccende una volta
+if(!S.fm.fmfix){ S.fm.banks.forEach(b=>{ if(b.v.length) b.fm = true; }); S.fm.fmfix = 1; }
 delete S.fm.bank; delete S.fm.bankName;
 S.fm.bslot = Math.max(0, Math.min(3, S.fm.bslot | 0));
 if(!Array.isArray(S.fm.mute) || S.fm.mute.length !== 6) S.fm.mute = [0,0,0,0,0,0];
@@ -981,7 +983,7 @@ function fvUI(pg){
     const f = u.fvfile.files[0]; u.fvfile.value = ""; if(!f) return;
     let vs = []; try{ vs = fvParse(await f.arrayBuffer()); }catch(e){}
     if(!vs.length){ fvSt("No DX7 voices in " + f.name); return; }
-    const b = fvB(); b.v = vs.slice(0, 32); b.name = f.name; S.fm.slot = 0; save(); fvBankFill(); fvPick();
+    const b = fvB(); b.v = vs.slice(0, 32); b.name = f.name; b.fm = true; S.fm.slot = 0; save(); fvBankFill(); fvPick();
     fvSt(b.v.length + (b.v.length === 1 ? " voice" : " voices") + " from " + f.name + " in bank " + FV_SLOTS[S.fm.bslot] +
       (b.fm ? " · untick “on the FM-1” if that bank of the FM-1 holds something else" : FM.sx ? "" : " · enable SysEx to hear them"));
   };
