@@ -575,8 +575,16 @@ FM_FX.forEach(e=>{ const s = S.fm.fx[e.k] = Object.assign({on:false, v:e.p.map(q
   s.v = e.p.map((q, i)=>Math.max(0, Math.min(q.max, typeof s.v[i] === "number" ? s.v[i] : q.d))); });
 const FM = { src:null, stream:null, trim:null, an:null, ui:{}, k:0, clkOn:false, edit:false };
 let midiFromName = "";
-function fmPort(){ if(!midiAcc || !S.fm.dst) return null; let p = null; midiAcc.outputs.forEach(o=>{ if(o.name === S.fm.dst) p = o; }); return p; }
-function fmAuto(){ if(S.fm.dst) return; const n = outNames.find(x=>FM_RX.test(x)); if(n){ S.fm.dst = n; save(); } }
+function fmFind(acc){
+  if(!acc) return null; let p = null, alt = null;
+  acc.outputs.forEach(o=>{ if(o.state === "disconnected") return; if(o.name === S.fm.dst) p = o; else if(!alt && FM_RX.test(o.name)) alt = o; });
+  if(!p && alt){ S.fm.dst = alt.name; save(); p = alt; setTimeout(fmFillMidi, 0); }
+  return p;
+}
+function fmPort(){ return fmFind(midiAcc); }
+function fmMissing(acc){ const n = []; if(acc) acc.outputs.forEach(o=>{ if(o.state !== "disconnected") n.push(o.name); });
+  return "FM-1 not connected" + (S.fm.dst ? " (" + S.fm.dst + ")" : "") + " · MIDI outputs: " + (n.length ? n.join(", ") : "none"); }
+function fmAuto(){ if(S.fm.dst && outNames.includes(S.fm.dst)) return; const n = outNames.find(x=>FM_RX.test(x)); if(n){ S.fm.dst = n; save(); } }
 function fmRaw(d, at){
   const p = fmPort(); if(!p) return false;
   const ts = at != null && ctx ? performance.now() + Math.max(0, (at - ctx.currentTime) * 1000) : undefined;
@@ -797,7 +805,7 @@ S.fm.slot = Math.max(0, S.fm.slot | 0); if(!S.fm.tab) S.fm.tab = "setup";
 FM.kshow = [];
 
 /* SysEx: Chrome lo concede con un permesso a parte; la board lo chiede solo quando serve all'editor */
-function fmSxPort(){ if(!FM.sx || !S.fm.dst) return null; let p = null; FM.sx.outputs.forEach(o=>{ if(o.name === S.fm.dst) p = o; }); return p; }
+function fmSxPort(){ return fmFind(FM.sx); }
 async function fmSxEnable(){
   if(!navigator.requestMIDIAccess){ fvSt("No Web MIDI: use Chrome"); return; }
   try{ FM.sx = await navigator.requestMIDIAccess({sysex:true}); S.fm.sysex = true; save(); FM.sx.onstatechange = fvShowSx; }
@@ -818,7 +826,7 @@ function fvSt(t){ if(FM.ui.fvst) FM.ui.fvst.textContent = t; }
 function fvShowSx(){
   const u = FM.ui; if(!u.fvsx) return;
   u.fvsx.classList.toggle("on", !!FM.sx); u.fvsx.textContent = FM.sx ? "SysEx on" : "Enable SysEx";
-  fvSt(!FM.sx ? "Edits stay here until SysEx is on" : !S.fm.dst ? "Choose the FM-1 port in Setup" : fmSxPort() ? "Editing the FM-1 live" : "FM-1 not connected");
+  fvSt(!FM.sx ? "Edits stay here until SysEx is on" : fmSxPort() ? "Editing the FM-1 live · " + S.fm.dst : fmMissing(FM.sx));
 }
 
 /* ----- disegni: inviluppi e schema dell'algoritmo ----- */
@@ -917,7 +925,7 @@ function fvPick(){
   if(!b.fm){ fvUse(v.slice()); return; }
   S.fm.prog = S.fm.bslot * 32 + S.fm.slot; S.fm.voice = v.slice(); S.fm.mute = [0,0,0,0,0,0]; save(); fvRefresh(); fmShow();
   if(fmPort()){ fmProg(); fvSt("Program " + FV_SLOTS[S.fm.bslot] + String(S.fm.slot + 1).padStart(2, "0") + " on the FM-1 · " + fvName(v)); }
-  else fvSt("FM-1 not connected");
+  else fvSt(fmMissing(midiAcc));
 }
 /* Prog nella scheda Setup: se quel banco è nella board ed è sull'FM-1, l'editor carica la stessa voce */
 function fvFromProg(){

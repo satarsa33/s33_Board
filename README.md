@@ -19,7 +19,7 @@ Made for **Chrome on the Mac** with a MIDI keyboard. It is a **PWA** in a single
 The service worker needs `http://localhost` or `https://`:
 
 ```bash
-cd "v22 (1.7.1)"
+cd "v23 (1.7.2)"
 python3 -m http.server 8000
 # open http://localhost:8000 in Chrome → ⋮ menu → Install S33 - Board
 ```
