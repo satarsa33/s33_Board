@@ -1,6 +1,6 @@
 # S33 - Board
 
-The **S33 instruments on one board**, connected with cables like a modular rack: **Twin Core**, **Nostos One**, **JSB**, **Drum Machine**, **Granular Machine**, **Stompbox** and the hardware **M-VAVE FM-1**, plus MIDI in/out, a common Clock, a Mixer and an Output with WAV recording.
+The **S33 instruments on one board**, connected with cables like a modular rack: **Twin Core**, **Nostos One**, **Vega**, **JSB**, **Drum Machine**, **Granular Machine**, **Stompbox** and the hardware **M-VAVE FM-1**, plus MIDI in/out, a common Clock, a Mixer and an Output with WAV recording.
 
 Made for **Chrome on the Mac** with a MIDI keyboard. It is a **PWA** in a single HTML file (the instruments are built in), with no dependencies.
 
@@ -44,6 +44,7 @@ Browser storage is per address: a board opened as a file, from `localhost` or fr
 | Mixer | SEND out | Per instrument: wide fader with the level inside, pan and send knobs, mute, solo |
 | Twin Core | MIDI, CLK in · OUT | Mono 2-VCO synth; arpeggiator follows the Clock |
 | Nostos One | MIDI, CLK in · OUT | Polyphonic modular synth; arpeggiator and synced delay follow the Clock |
+| Vega | MIDI, CLK in · OUT | 8-voice 1980s-style polysynth (Juno-like); chorus, arpeggiator on the Clock grid, patch memory, Juno-106 patch import |
 | JSB | CLK in · OUT, P1–P4 MIDI out | 4-playhead sequencer; each playhead sends MIDI on its own channel |
 | Drum Machine | CLK in · OUT, MIDI out | 4-voice drum machine; hits go out as MIDI (channel 10, GM notes) |
 | Granular | IN, MIDI, CLK in · OUT | 4-track granular sampler; records from its IN jack (or the mic) on the bar; LPD8 pads and knobs |
@@ -82,6 +83,7 @@ python3 build/build.py \
   "../s33 - Nostos One Synth/v7 (1.5.0)/index.html" \
   "../s33 - JSB/v9/index.html" \
   "../s33_Granular/s33_Granular Machine/v4 (Board)/index.html" \
+  "../s33_Vega/v6 (1.0.0)/index.html" \
   build/board-template.html "vNN (x.y.z)/index.html"
 ```
 
@@ -90,7 +92,7 @@ If an instrument changes in a place the script patches, it stops with *"atteso 1
 ## Known limits
 
 - One shared audio engine: with every instrument busy the Mac can run out of headroom; the **Load** light in the top bar turns amber or red. Lower Nostos One's voices first.
-- Twin Core's own Tempo knob is ignored while its CLK jack is patched.
+- Twin Core's own Tempo knob, and Vega's arpeggiator RATE, are ignored while their CLK jack is patched and the Clock runs.
 - Granular: the samples travel inside the session file, which can grow to a few MB.
 - Stems: Twin Core reaches the Stompbox through a cable, so the *Stompbox* stem already contains it.
 

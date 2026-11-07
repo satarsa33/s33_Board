@@ -87,6 +87,7 @@ Cosa riceve chi è collegato al Clock:
 |---|---|
 | Twin Core | Arpeggiatore (la manopola Tempo viene ignorata) |
 | Nostos One | Arpeggiatore e delay sincronizzato |
+| Vega | Arpeggiatore in sedicesimi sulla griglia del Clock (lo slider RATE viene ignorato); nell'intestazione ARPEGGIO compaiono i BPM |
 | JSB | Tempo, Play/Stop, griglia |
 | Drum Machine | Tempo, Play/Stop, griglia; il primo step coincide con la battuta |
 | Stompbox | Tempo del delay = un battito (come il TAP) |
@@ -96,7 +97,7 @@ Cosa riceve chi è collegato al Clock:
 
 ## 5. Mixer
 
-Un canale per strumento: **TWIN**, **NOST**, **JSB**, **DRUM**, **GRAN**, **STOMP**. Nella versione ingrandita i nomi sono interi, le manopole mostrano il valore e la corsia ha la scala in dB.
+Un canale per strumento: **TWIN**, **NOST**, **VEGA**, **JSB**, **DRUM**, **GRAN**, **STOMP**. Nella versione ingrandita i nomi sono interi, le manopole mostrano il valore e la corsia ha la scala in dB.
 
 - **PAN**: manopola della posizione stereo. Trascina in su o in giù (Maiusc per la regolazione fine) o usa la rotella del mouse. Doppio clic per il centro.
 - **SND**: manopola della mandata verso la presa **SEND** del Mixer, presa dopo il fader. Doppio clic per azzerarla.
@@ -123,6 +124,7 @@ Ogni strumento ha la sua interfaccia completa, con preset e manopole, ed è lo s
 
 - **Twin Core**: monofonico, due oscillatori, patch bay interna, molla. Prese: MIDI, CLK, OUT.
 - **Nostos One**: polifonico (fino a 8 voci), modulare. Le sue facce Panel e Board sono interne al modulo. Prese: MIDI, CLK, OUT.
+- **Vega**: polifonico a 8 voci in stile anni '80 (tipo Juno), con chorus, arpeggiatore, modi Poly/Unison/Mono, memoria a banchi e libreria di patch Juno-106. Prese: MIDI, CLK, OUT. Di serie riceve dal **MIDI In 2**: scegli lì la tastiera e il canale, oppure sposta il cavo su MIDI In. Il pulsante POWER di Vega avvia anche l'audio della board.
 - **JSB**: quattro playhead su una griglia nella scala scelta. Prese:
   - **OUT**: la voce interna della JSB. Per sentire solo i synth, abbassa o metti in mute il canale JSB nel Mixer.
   - **P1–P4**: le note di ogni playhead, sul canale 1–4. Le note lunghe durano davvero. Il Mute di un playhead ferma anche le sue note MIDI.
@@ -213,7 +215,7 @@ In alto, il blocco **Session**:
 - **Open…**: apre una sessione e ricarica la board. Poi premi **Start audio**.
 - **New**: tutto torna allo stato iniziale. Chiede conferma con un secondo clic.
 
-Una sessione contiene cavi, disposizione, Clock, Mixer, MIDI, Output e lo stato di ogni strumento: suono di Twin Core, patch di Nostos, griglia della JSB, pattern della Drum Machine, pedali della Stompbox, tracce e **campioni** della Granular (per questo una sessione con campioni lunghi può pesare qualche MB). Restano fuori le librerie dei tuoi preset e la skin di Nostos.
+Una sessione contiene cavi, disposizione, Clock, Mixer, MIDI, Output e lo stato di ogni strumento: suono di Twin Core, patch di Nostos, suono corrente di Vega, griglia della JSB, pattern della Drum Machine, pedali della Stompbox, tracce e **campioni** della Granular (per questo una sessione con campioni lunghi può pesare qualche MB). Restano fuori le librerie dei tuoi preset (anche i banchi B–D e la libreria Juno di Vega) e la skin di Nostos.
 
 ---
 
@@ -225,7 +227,7 @@ Accanto a *Running*, in alto:
 - **giallo**: qualche interruzione;
 - **rosso**: interruzioni frequenti.
 
-Passa il mouse sopra la spia per vedere il dettaglio e la latenza. Se diventa rossa, abbassa prima le voci di Nostos One (da 8 a 4) e chiudi le app pesanti.
+Passa il mouse sopra la spia per vedere il dettaglio e la latenza. Se diventa rossa, abbassa prima le voci di Nostos One (da 8 a 4), metti Vega in MONO se non ti servono gli accordi e chiudi le app pesanti.
 
 ---
 
@@ -241,7 +243,7 @@ Passa il mouse sopra la spia per vedere il dettaglio e la latenza. Se diventa ro
 | Doppio clic su fader, PAN, SND | Valore di partenza |
 | Maiusc mentre trascini o usi la rotella su fader e manopole | Regolazione fine |
 
-Dentro gli strumenti valgono le loro scorciatoie: tasti A–K in Twin Core e Nostos, spazio nella Drum Machine, tasti 1–4 e spazio (ferma tutto) nella Granular.
+Dentro gli strumenti valgono le loro scorciatoie: tasti A–K in Twin Core, Nostos e Vega, spazio nella Drum Machine, tasti 1–4 e spazio (ferma tutto) nella Granular.
 
 ---
 

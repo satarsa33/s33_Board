@@ -1,7 +1,7 @@
 {
   "name": "S33 - Board",
   "short_name": "S33 Board",
-  "description": "The S33 instruments on one board, connected with cables: Twin Core, Nostos One, JSB, Drum Machine and Stompbox.",
+  "description": "The S33 instruments on one board, connected with cables: Twin Core, Nostos One, Vega, JSB, Drum Machine, Granular and Stompbox.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
