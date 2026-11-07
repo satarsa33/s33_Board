@@ -361,7 +361,7 @@ const DEFAULT_CABLES = [
   {a:{m:"vg",p:"out"},       b:{m:"outm",p:"in"}}
 ];
 const KEY = "s33-board-v2";
-const LAYOUT_V = 8;   // cambia quando cambia la disposizione d'insieme
+const LAYOUT_V = 9;   // cambia quando cambia la disposizione d'insieme
 
 function portOf(e){ return DEFS[e.m] && DEFS[e.m].ports.find(q=>q.p === e.p); }
 
@@ -408,7 +408,10 @@ function load(){
   return defaults();
 }
 let saveT = 0;
-function save(){ clearTimeout(saveT); saveT = setTimeout(()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }, 250); }
+function save(){ clearTimeout(saveT); saveT = setTimeout(()=>{ try{ localStorage.setItem(KEY, JSON.stringify(stateToSave())); }catch(e){} }, 250); }
+/* un modulo ingrandito (doppio clic sul titolo) si salva con la sua posizione normale:
+   alla riapertura, e nelle sessioni, la board torna sempre in ordine */
+function stateToSave(){ const pos = {...S.pos}; try{ ORDER.forEach(id=>{ if(P[id] && P[id].max) pos[id] = {...P[id].max}; }); }catch(e){} return {...S, pos}; }
 
 /* ===== Motore audio condiviso ===== */
 let ctx = null, startP = null;
@@ -1410,7 +1413,7 @@ function sessMsg(t){ const m = document.getElementById("smsg"); m.textContent = 
 function sessSetName(n){ sessName = (n || "Untitled").trim() || "Untitled"; document.getElementById("sname").value = sessName;
   try{ localStorage.setItem(SKEY, JSON.stringify({name:sessName})); }catch(e){} }
 async function sessSnapshot(){
-  try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+  try{ localStorage.setItem(KEY, JSON.stringify(stateToSave())); }catch(e){}
   const sb = S33mods.sb; if(sb && sb.saveState) try{ sb.saveState(); }catch(e){}
   await new Promise(res=>setTimeout(res, 450));            // gli strumenti salvano con un piccolo ritardo
   const storage = {}; SESSION_KEYS.forEach(k=>{ let v = null; try{ v = localStorage.getItem(k); }catch(e){} storage[k] = v; });
