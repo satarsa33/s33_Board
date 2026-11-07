@@ -134,6 +134,8 @@ Ogni strumento ha la sua interfaccia completa, con preset e manopole, ed è lo s
 
 ### Granular
 
+All'apertura della board la Granular è **ferma**: le tracce partono con **Play all** (o Spazio, o il pad 7 dell'LPD8), così niente suona da solo.
+
 Quattro tracce, ognuna con la sua catena **Material → Granular → Filter → Color → Space**. Si lavora su una traccia alla volta: clic su **1–4** nel blocco TRACKS (o tasti 1–4, o i pad 1–4 dell'LPD8) e tutti i blocchi mostrano quella traccia. **M** e **S** sono mute e solo delle tracce; **TRACK MIX** regola livello e pan di ognuna. Nel Mixer della board la Granular ha un solo canale, **GRAN**.
 
 - **Material**: il campione della traccia. **REC** registra da **IN** (quello che arriva dal cavo) oppure da **MIC**; **File** apre un file audio (anche trascinandolo sulla forma d'onda), **Demo** carica un suono di prova. Sulla forma d'onda trascini la porzione da usare; doppio clic per tornare al campione intero. **Reverse** lo suona al contrario, **Own / = track N** usa il campione di un'altra traccia.
