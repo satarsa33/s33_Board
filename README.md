@@ -83,7 +83,7 @@ python3 build/build.py \
   "../s33 - Nostos One Synth/v7 (1.5.0)/index.html" \
   "../s33 - JSB/v9/index.html" \
   "../s33_Granular/s33_Granular Machine/v4 (Board)/index.html" \
-  "../s33_Vega/v6 (1.0.0)/index.html" \
+  "../s33_Vega/v8 (1.1.1)/index.html" \
   build/board-template.html "vNN (x.y.z)/index.html"
 ```
 
